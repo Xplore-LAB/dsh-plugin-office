@@ -2,159 +2,159 @@
 
 # dsh-plugin-office
 
-**Email and documents, driven by conversation. Your data never leaves your machine.**
+**用大白话指挥 AI 干办公活。你的数据，全程不出自己的电脑。**
 
 [![Release](https://img.shields.io/github/v/release/Xplore-LAB/dsh-plugin-office)](https://github.com/Xplore-LAB/dsh-plugin-office/releases)
-[![Tests](https://img.shields.io/badge/tests-100%20passing-brightgreen)](#under-the-hood)
+[![Tests](https://img.shields.io/badge/tests-100%20passing-brightgreen)](#底层实现)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 [![Platform](https://img.shields.io/badge/platform-DeepSeek%20Harness-8a2be2)](https://github.com/deepseek-ai/deepseek-harness)
 
-English · [简体中文](README.zh-CN.md) · [产品介绍（通俗版）](docs/PRODUCT-INTRO.zh-CN.md)
+简体中文 · [English](README.en.md) · [产品介绍（更通俗的版本）](docs/PRODUCT-INTRO.zh-CN.md)
 
 </div>
 
 ---
 
-A native plugin for [DeepSeek Harness (DSH)](https://github.com/deepseek-ai/deepseek-harness) that turns your terminal agent into an office assistant: mail merge, inbox triage, archiving, mail statistics, a job-application ledger, a subscription cleanup advisor, plus Word / PowerPoint / spreadsheet generation. Fourteen tools, one chat window.
+一个跑在 [DeepSeek Harness（DSH）](https://github.com/deepseek-ai/deepseek-harness)里的办公插件：你用聊天的方式提要求，AI 替你发邮件、整理收件箱、归档、管求职进度，顺手还能写 Word、做 PPT、算表格。十四个工具，一个聊天窗口全搞定。
 
-## What can it do?
+## 它能干什么？
 
-You describe the task in plain language; the agent picks the right tool and shows its work.
+你只管用大白话描述任务，AI 自己挑工具、自己干活，还把过程摆给你看。
 
-### Send 40 personalized emails without the copy-paste grind
+### 40 封个性化邮件，告别复制粘贴
 
-> "Here's `recipients.csv`. Send each person the payroll notice with their own attachment. Show me a preview first."
+> 「这是 `recipients.csv`。给每个人发工资条通知，附件用各自的。先给我看预览。」
 
-Every row is rendered and validated, you approve what you see, then delivery runs over paced SMTP with a full audit log. QQ / 163 / 126 / Gmail / Outlook accounts all work — the accounts free-mail users already have. The Outlook Word-Excel mail-merge dance is not required.
+每一行都先渲染、先检查，你看过点头之后才真正发出去。发送走 SMTP，有节奏控制、有完整台账。QQ / 163 / 126 / Gmail / Outlook 邮箱都能用，免费邮箱一视同仁。Outlook 里那套「Word 邮件合并 + Excel」的老舞步，可以彻底忘了。
 
-### An inbox that triages itself
+### 收件箱自己会分诊
 
-> "What actually needs my attention from the last three days?"
+> 「最近三天，哪些邮件真需要我处理？」
 
-A read-only IMAP pull (nothing is ever marked as read), then a deterministic sort into **todo / notice / subscription / personal**. Every verdict carries its evidence — "subject contains interview, deadline Sep 6" — so misfiles are visible and correctable, and low-confidence items are flagged for a second look instead of guessed at.
+先只读拉一遍收件（绝不给你标记已读），然后按规则分成四堆：**要办的、通知、订阅、私信**。每条判定都附理由，比如「主题含面试，截止 9 月 6 日」，分错了你一眼能看出来；拿不准的单独标出来让你复核，绝不瞎猜。
 
-### Package a whole term of mail for the next committee
+### 一学期的邮件，打包交给下一届
 
-> "Export everything from the club inbox this semester, attachments included."
+> 「把社团邮箱这学期的邮件全导出来，附件也要。」
 
-Matched messages export as `.eml` plus an `index.csv`, with batch attachment harvesting (every résumé PDF from a sign-up inbox in one command), deduped filenames, and size caps. Built for handovers, bulk document collection, and "I need that one attachment from March."
+匹配到的邮件导出成 `.eml` 加一份 `index.csv`，附件一键批量收齐（报名邮箱里的简历 PDF 一条命令全拿下），文件名自动去重，大小有上限。换届交接、批量收材料、以及「三月份那个附件在哪」这类考古需求，都吃这碗饭。
 
-### A job tracker that writes itself
+### 求职进度自己长出来的台账
 
-> "Where do my applications stand?"
+> 「我投的那些公司，现在都什么状态了？」
 
-The ledger auto-detects signals in your mail and merges them **forward-only**: applied → written-test → interview → offer. A late rejection never overwrites a recorded offer. Freemail recruiting mail is set aside for you to attribute manually. Exports a CSV you can slice with the bundled spreadsheet tools.
+它自动从邮件里识别线索，往台账里归并，方向只前进：已投 → 笔试 → 面试 → offer。迟到的拒信不会覆盖已经记录的 offer。免费邮箱发来的招聘信会先放到一边，等你亲手归到对应公司。随时导出 CSV，用套件自带的表格工具接着统计。
 
-### Find out who is flooding your inbox
+### 看看是谁在轰炸你的邮箱
 
-> "Which subscriptions should I kill?"
+> 「哪些订阅值得退掉？」
 
-A per-sender frequency ranking with each sender's unsubscribe link when they provided one. Advice only — it never unsubscribes, deletes, or moves anything for you.
+按发件人排出频率榜，谁发得最勤一目了然；对方邮件里带了退订链接的，直接给你列出来。只出主意，绝不动手：退订、删除、移动，一概不代劳。
 
-### Plus the document side
+### 顺手的文档能力
 
-Word documents from structured blocks, PPT decks from slide blocks, `{{placeholder}}` filling inside existing `.docx` templates, and a CSV/XLSX pipeline (inspect / filter / aggregate / split) that always looks at the columns before it touches your data.
+结构化内容块生成 Word、幻灯块生成 PPT、往现成的 `.docx` 模板里填 `{{占位符}}`、CSV/XLSX 流水线（先摸清列结构再动手：查看 / 筛选 / 汇总 / 拆分）。
 
-## What it looks like
+## 长什么样
 
 ```text
-You    : pull the last 20 inbox messages and tell me what needs action today
-Agent  : Fetched 20 messages. 3 need action:
-         · Tencent HR (Sep 4)   interview invitation, reply by Sep 6   [todo]
-         · jwc@zju.edu.cn (Sep 3)  course registration window opens   [notice]
-         · 17 others classified notice/subscription/personal, no deadlines.
+你    ：拉一下最近 20 封收件，告诉我今天要处理什么
+AI    ：拉取了 20 封，3 封需要处理：
+       · 腾讯 HR（9月4日）  面试邀请，9月6日前回复     [要办的]
+       · 教务处（9月3日）   选课窗口明天开启           [通知]
+       · 其余 17 封分为通知/订阅/私信，无截止事项。
 
-You    : where do my job applications stand?
-Agent  : Scanned the index — ledger now has 11 companies:
-         3 interviews (Tencent, ByteDance, Alibaba), 6 written-tests,
-         2 no reply for 14+ days. Exported track.csv.
+你    ：我的求职进展到哪一步了？
+AI    ：扫描完索引，台账现有 11 家公司：
+       3 家面试中（腾讯、字节、阿里），6 家笔试，
+       2 家已 14 天无回复。已导出 track.csv。
 
-You    : aggregate that CSV by status into a table
-Agent  : track.csv → status counts: interview 3, written-test 6, applied 2.
-         Wrote summary.xlsx.
+你    ：把这份 CSV 按状态汇总成表
+AI    ：track.csv → 状态统计：面试 3、笔试 6、已投 2。
+       已写入 summary.xlsx。
 ```
 
-## The 14 tools
+## 十四个工具
 
-| Tool | What you say | What happens |
+| 工具 | 你说什么 | 实际发生什么 |
 |---|---|---|
-| `office_mail_preview` | "render this template against recipients.csv" | every row rendered + validated, persisted, `previewId` returned |
-| `office_mail_send` | "send preview pm_1a2b3c, confirmed" | `.eml` drafts (no SMTP) or paced SMTP delivery + JSONL audit log |
-| `office_inbox_fetch` | "pull the last 20 inbox messages" | read-only IMAP (PEEK, no `\Seen`), metadata + snippet indexed to JSONL |
-| `office_inbox_triage` | "triage what came in overnight" | deterministic buckets (todo/notice/subscription/personal) with per-message evidence |
-| `office_archive_search` | "find offer mails with attachments" | local index search by sender/subject/window/attachment/category, zero network |
-| `office_archive_export` | "package this term's org mail" | matched messages re-fetched read-only, written as `.eml` + `index.csv` |
-| `office_archive_attach` | "collect all résumé PDFs from the sign-up mails" | attachments saved into workDir, deduped filenames, size/extension caps |
-| `office_stats_overview` | "how much mail did I get this term" | monthly trend, top contacts, category mix from local index + audit log |
-| `office_stats_track` | "where do my job applications stand" | auto ledger applied→written-test→interview→offer (forward-only) + manual fixes + CSV |
-| `office_inbox_clean` | "which subscriptions should I kill" | per-sender frequency table with List-Unsubscribe URLs; advice only, never acts |
-| `office_docgen` | "generate an offer letter per row of employees.csv" | one `.docx` per row, shared `{{field}}` engine, refuses silent overwrites |
-| `office_pptx` | "make a 5-slide Q3 review deck" | one `.pptx` from slide blocks, batch mode included |
-| `office_template` | "fill contract.docx for each row of clients.csv" | placeholders replaced inside the template, split-run safe |
-| `office_sheet` | "aggregate salary by department to xlsx" | groupBy + sum/avg/min/max/count, `.csv`/`.xlsx` output |
+| `office_mail_preview` | "用这个模板渲染 recipients.csv" | 逐行渲染 + 校验，存好，返回 `previewId` |
+| `office_mail_send` | "发送预览 pm_1a2b3c，确认" | 草稿模式写 `.eml`（无需 SMTP），或节流投递 + JSONL 台账 |
+| `office_inbox_fetch` | "拉取最近 20 封收件" | 只读 IMAP（PEEK，不置已读），元数据 + 摘要落本地索引 |
+| `office_inbox_triage` | "分诊昨晚收到的邮件" | 确定性规则分四桶（要办/通知/订阅/私信），每条附判定理由 |
+| `office_archive_search` | "找带附件的 offer 邮件" | 本地索引检索：发件人/主题/时间/附件/分类，零网络 |
+| `office_archive_export` | "把这届社团的邮件打包交接" | 匹配邮件只读重取，落 `.eml` + `index.csv` |
+| `office_archive_attach` | "把报名邮件里的简历都收下来" | 附件存进工作目录，文件名去重，大小/类型上限 |
+| `office_stats_overview` | "这学期我收发了多少邮件" | 月度趋势、常用联系人、分类构成，纯本地统计 |
+| `office_stats_track` | "我的求职进展到哪一步了" | 自动台账 已投→笔试→面试→offer（只前进）+ 手动修正 + CSV |
+| `office_inbox_clean` | "哪些订阅值得退掉" | 按发件人排频率榜 + 退订链接；只出建议，绝不代劳 |
+| `office_docgen` | "按 employees.csv 每行生成一份通知书" | 每行一份 `.docx`，共用 `{{字段}}` 引擎，拒绝静默覆盖 |
+| `office_pptx` | "做一份 5 页的 Q3 汇报 PPT" | 幻灯块生成 `.pptx`，同样支持批量 |
+| `office_template` | "按 clients.csv 每行填充合同模板" | 模板内占位符替换，跨 run 拆分安全 |
+| `office_sheet` | "按部门汇总工资输出 xlsx" | groupBy + sum/avg/min/max/count，输出 `.csv`/`.xlsx` |
 
-## Who it's for
+## 给谁用
 
-Students and educators, club and org leaders, job seekers in application season, and anyone whose "office suite" is a free mailbox. Especially if you care where your mail and documents actually live.
+学生和老师、社团和组织负责人、找工作季节的求职者，以及所有「办公软件就是一个免费邮箱」的人。尤其适合在意自己的邮件和文档到底存在哪的人。
 
-| | Webmail built-ins | Copilot-style assistants | dsh-plugin-office |
+| | 网页版邮箱自带功能 | Copilot 类助手 | dsh-plugin-office |
 |---|---|---|---|
-| Cost | free | monthly subscription | free (MIT), you only pay your model usage |
-| Mailboxes | the vendor's own | tied to the vendor's ecosystem | QQ / 163 / 126 / Gmail / Outlook, one setup each |
-| Your data | provider's servers | vendor cloud | your machine, nothing uploaded |
-| Hackable | no | limited | fully — it's open source |
+| 花费 | 免费 | 按月订阅 | 免费（MIT），只花你本来就在花的模型用量 |
+| 邮箱 | 只有自家 | 绑死厂商生态 | QQ / 163 / 126 / Gmail / Outlook，各配一次 |
+| 数据在哪 | 服务商服务器 | 厂商云端 | 自己电脑，不上传任何东西 |
+| 能不能改 | 不能 | 有限 | 完全开源，随便改 |
 
-No claim of "safer than the big vendors" — the honest statement is that the threat surface is different and every part of it is under your control: [SECURITY.md](SECURITY.md).
+不宣称「比大厂更安全」，诚实的说法是：威胁面不同，而且每一块都握在你自己手里。详见 [SECURITY.md](SECURITY.md)。
 
-## Safety model
+## 安全模型（人话版）
 
-- **Sending is two-phase.** Nothing leaves without a preview you approved with `confirm:true`. Recipient caps, per-message pacing, domain allowlist, append-only audit log.
-- **Receiving is strictly read-only.** Bodies fetched with PEEK (never marks `\Seen`), no flag writes, no deletes; the local index keeps metadata plus a 300-character snippet only.
-- **Cleanup is advice-only.** It never unsubscribes, deletes, moves, or sends anything.
-- **Files stay in bounds.** Exports and attachment downloads are confined to your working directory with explicit caps; untrusted spreadsheet cells can never reach files outside it.
-- **Failures are loud.** A missing `{{field}}` is a hard error naming the field; documents never ship with raw placeholders; outputs never silently overwrite.
-- **Credentials stay out of files.** SMTP and IMAP secrets come from environment variables only.
+- **发信必须过两道门。** 没有你预览点头 + `confirm:true`，一封都发不出去。收件人上限、逐封节流、域名白名单、只追加的台账，全都有。
+- **收信严格只读。** 正文用 PEEK 方式拉（绝不标记已读），不改旗标、不删信；本地索引只存元数据和 300 字摘要。
+- **清理只出主意。** 退订、删除、移动、发送，一概不代劳。
+- **文件不出界。** 导出和附件下载锁死在工作目录里，带显式上限；不可信的表格单元格永远没法把目录之外的文件当附件发出去。
+- **出错就大声报。** 缺 `{{字段}}` 直接报错并指明字段名，文档绝不带原始占位符出仓；输出绝不悄悄覆盖。
+- **密码不落盘。** SMTP 和 IMAP 的凭据只从环境变量读。
 
-## Install
+## 安装
 
 ```bash
-# 1. copy into your DSH profile's @local namespace
+# 1. 复制进 DSH profile 的 @local 命名空间
 cp -R dsh-plugin-office ~/.dsh/profiles/<profile>/node_modules/@local/dsh-plugin-office
 cd ~/.dsh/profiles/<profile>/node_modules/@local/dsh-plugin-office
 npm install --omit=dev
-rm -rf node_modules/@deepseek-ai node_modules/@standard-schema   # keep single runtime instances
+rm -rf node_modules/@deepseek-ai node_modules/@standard-schema   # 保持运行时单实例
 
-# 2. register in ~/.dsh/profiles/<profile>/cordis.patch.yml
+# 2. 在 ~/.dsh/profiles/<profile>/cordis.patch.yml 注册
 - insert:
     - id: tool-office
       name: '@local/dsh-plugin-office'
       config:
-        smtpHost: smtp.qq.com      # required only for mode "send"
+        smtpHost: smtp.qq.com      # 仅 mode "send" 需要
         smtpUser: ''
         smtpPassEnv: DSH_SMTP_PASS
         fromAddress: ''
         maxRecipients: 50
         maxDocRows: 100
         maxSheetRows: 20000
-        maxArchiveMessages: 200    # office_archive_export / _attach cap
-        maxAttachmentMb: 25        # per-attachment cap for _attach
-        imapUser: 'me@qq.com'      # required only for office_inbox_fetch
-        imapPassEnv: DSH_IMAP_PASS # QQ/163/126 need an authorization code, not the password
+        maxArchiveMessages: 200    # office_archive_export / _attach 上限
+        maxAttachmentMb: 25        # _attach 单附件上限
+        imapUser: 'me@qq.com'      # 仅 office_inbox_fetch 需要
+        imapPassEnv: DSH_IMAP_PASS # QQ/163/126 需要授权码，非登录密码
 ```
 
-**Zero-config subset**: documents, spreadsheets, decks, archive search, stats, and mail drafts (`.eml`) work with no credentials at all. Only real SMTP sending and IMAP fetching need authorization codes.
+**零配置就能用的部分**：文档、表格、PPT、归档检索、统计、邮件草稿（`.eml`），全都不需要任何凭据。只有 SMTP 真发信和 IMAP 收信需要授权码。收件工具的 `imapHost` 会按你的邮箱地址自动推导（qq/foxmail/163/126/gmail/outlook/hotmail/live 预设），其他邮箱需显式配置 `imapHost`。
 
 <details>
-<summary><b>All tool-call examples</b> (JSON args the agent composes for you)</summary>
+<summary><b>全部工具调用示例</b>（AI 会替你组装这些 JSON，人不用写）</summary>
 
-**Batch letters from a CSV** (data columns become `{{field}}` variables):
+**CSV 批量生成信函**（数据列自动成为 `{{字段}}` 变量）：
 
 ```json
 {
   "content": [
-    { "type": "heading", "level": 1, "text": "Performance letter for {{name}}" },
-    { "type": "paragraph", "text": "Dear {{name}}, your salary is {{salary}}." },
-    { "type": "table", "header": ["Item", "Score"], "rows": [["Salary", "{{salary}}"]] }
+    { "type": "heading", "level": 1, "text": "{{name}} 的绩效通知" },
+    { "type": "paragraph", "text": "尊敬的 {{name}}，您的薪资为 {{salary}}。" },
+    { "type": "table", "header": ["项目", "数值"], "rows": [["薪资", "{{salary}}"]] }
   ],
   "dataFile": "employees.csv",
   "outputDir": "letters",
@@ -162,7 +162,7 @@ rm -rf node_modules/@deepseek-ai node_modules/@standard-schema   # keep single r
 }
 ```
 
-**Spreadsheet pipeline** — inspect first, then act:
+**表格流水线**，先 inspect 再操作：
 
 ```json
 { "file": "employees.csv", "action": "inspect" }
@@ -176,23 +176,23 @@ rm -rf node_modules/@deepseek-ai node_modules/@standard-schema   # keep single r
   "splitBy": "department", "outputPrefix": "out/dept" }
 ```
 
-**Mail merge** — preview, show the human, then send:
+**邮件合并**，预览、给用户确认、再发送：
 
 ```json
-{ "subjectTemplate": "{{month}} payroll notice for {{name}}",
-  "bodyTemplate": "Hi {{name}}, ...",
+{ "subjectTemplate": "{{month}} 工资条通知 - {{name}}",
+  "bodyTemplate": "{{name}} 您好，……",
   "recipientsFile": "recipients.csv", "attachmentColumn": "attachment" }
 { "previewId": "pm_…", "mode": "send", "confirm": true }
 ```
 
-**Inbox triage** — fetch read-only, then bucket:
+**收件分诊**，先只读拉取，再分桶：
 
 ```json
 { "limit": 20, "daysBack": 1 }
 { "sinceHours": 24 }
 ```
 
-**Archive & attachments** — search locally, then harvest:
+**归档与附件**，先本地检索，再批量收取：
 
 ```json
 { "from": "zju.edu.cn", "category": "todo", "hasAttachment": true }
@@ -200,66 +200,66 @@ rm -rf node_modules/@deepseek-ai node_modules/@standard-schema   # keep single r
 { "extensions": ["pdf"], "outputDir": "resumes", "workDir": "/path/to/work" }
 ```
 
-**Job ledger** — auto-scan, correct, export:
+**求职台账**，自动扫描、手动修正、导出：
 
 ```json
 { "action": "scan" }
-{ "action": "update", "company": "tencent", "status": "offer", "note": "SP, Nov start" }
+{ "action": "update", "company": "tencent", "status": "offer", "note": "SP，11 月入职" }
 { "action": "export", "outputPath": "track.csv", "workDir": "/path/to/work" }
 ```
 
 </details>
 
-## FAQ
+## 常见问题
 
 <details>
-<summary><b>Does it cost anything?</b></summary>
+<summary><b>要花钱吗？</b></summary>
 
-The plugin is MIT-licensed and free. You only pay for whatever DSH model usage you already have. No subscription, no cloud tier, no telemetry.
+插件 MIT 协议，免费。只花你本来就在花的 DSH 模型用量，没有订阅、没有云端付费档、没有遥测。
 </details>
 
 <details>
-<summary><b>Does it work with QQ / 163 / 126 mail?</b></summary>
+<summary><b>QQ / 163 / 126 邮箱能用吗？</b></summary>
 
-Yes. These providers expose full SMTP and IMAP to free accounts — you just need an authorization code (generated in the mailbox settings, distinct from your login password). Host presets are auto-derived from your address.
+能。这些邮箱对免费用户开放完整的 SMTP 和 IMAP，只需要在邮箱设置里生成一个授权码（和登录密码不同）。服务器地址按你的邮箱地址自动推导，不用手填。
 </details>
 
 <details>
-<summary><b>Can it send or delete something without my approval?</b></summary>
+<summary><b>它会不会不经我同意就发信、删信？</b></summary>
 
-No. Sending requires an explicit preview → approval → `confirm:true` sequence. The IMAP side is read-only by construction. The cleanup advisor produces a report and nothing else. These are design constraints, not configuration defaults.
+不会。发信必须走「预览 → 你点头 → `confirm:true`」三步；收件侧从设计上就是只读的；订阅清理只输出一份报告。这些是设计约束，改配置也绕不过去。
 </details>
 
 <details>
-<summary><b>Where does my mail content go?</b></summary>
+<summary><b>我的邮件内容存到哪了？</b></summary>
 
-Into a local JSONL index under `~/.dsh/office/mail/` — message metadata plus a 300-character snippet. Full text and attachments hit disk only when you explicitly export or harvest them. Nothing is uploaded anywhere.
+存在本机 `~/.dsh/office/mail/` 下的 JSONL 索引里，只有元数据和 300 字摘要。全文和附件只有你明确导出或收取时才落盘，不上传任何地方。
 </details>
 
 <details>
-<summary><b>Why not just use Office / Copilot / my webmail?</b></summary>
+<summary><b>为什么不直接用 Office / Copilot / 网页版邮箱？</b></summary>
 
-If those fit your life, keep them. This toolkit exists for the people they skip: free-mailbox users outside the paid ecosystem, and anyone who wants the automation to be inspectable and local. Read the full positioning in [docs/STRATEGY.zh-CN.md](docs/STRATEGY.zh-CN.md).
+它们够用就继续用。这套工具是给被它们跳过的人准备的：付费生态之外的免费邮箱用户，以及想让自动化过程看得见、数据留在本地的人。完整定位分析见 [docs/STRATEGY.zh-CN.md](docs/STRATEGY.zh-CN.md)。
 </details>
 
-## Under the hood
+## 底层实现
 
-Built as a native Cordis plugin (`defineTool`, no MCP hop). SMTP via nodemailer, IMAP via ImapFlow + mailparser (all Postal Systems lineage, MIT). Documents via docx / pptxgenjs / exceljs. 100 end-to-end tests cover every tool plus the security guardrails (path-escape, CRLF injection, overwrite refusal, forward-only ledger). Full threat model and vulnerability history: [SECURITY.md](SECURITY.md).
+原生 Cordis 插件（`defineTool`，无 MCP 中转）。SMTP 走 nodemailer，IMAP 走 ImapFlow + mailparser（同属 Postal Systems 血统，MIT）。文档走 docx / pptxgenjs / exceljs。100 项端到端测试覆盖全部工具和安全护栏（路径逃逸、头注入、覆盖拒绝、台账只前进）。完整威胁模型与漏洞史：[SECURITY.md](SECURITY.md)。
 
-## Roadmap
+## 路线图
 
-The mail lifecycle is covered end to end (write / send / receive / archive / analyze / clean). Next candidates, driven by real usage:
+邮件六大生命周期环节（写 / 发 / 收 / 归档 / 分析 / 清理）已全部覆盖。下一步候选，看真实使用反馈：
 
-- Reply drafts & follow-up reminders
-- Scheduled morning triage via DSH automation tasks
+- 回复草稿与跟进提醒
+- 结合 DSH 定时任务的每早自动分诊
 
-## Related
+## 相关
 
-- [word-mail-merge-batch-sender](https://github.com/Xplore-LAB/word-mail-merge-batch-sender) — the original VBA/Outlook edition of the mail merge; this plugin is its DSH successor
-- [dsh-plugin-asmemory](https://github.com/Xplore-LAB/dsh-plugin-asmemory) — persistent memory plugin for DSH
+- [word-mail-merge-batch-sender](https://github.com/Xplore-LAB/word-mail-merge-batch-sender)：邮件合并的 VBA/Outlook 初版，本插件是其 DSH 继任者
+- [dsh-plugin-asmemory](https://github.com/Xplore-LAB/dsh-plugin-asmemory)：DSH 持久记忆插件
 
-Further reading: [STRATEGY](docs/STRATEGY.zh-CN.md) (why mail is still an open field and where the big vendors' moats crack) · [scenario map](docs/MAIL-SCENARIOS.zh-CN.md) (all six lifecycle segments) · [product intro in plain Chinese](docs/PRODUCT-INTRO.zh-CN.md).
+延伸阅读：[发展策略](docs/STRATEGY.zh-CN.md)（邮件方向还有多大空间、巨头的壁垒裂在哪） · [场景全景地图](docs/MAIL-SCENARIOS.zh-CN.md)（六大环节的完整场景拆解） · [产品介绍](docs/PRODUCT-INTRO.zh-CN.md)（更通俗的版本）
 
-## License
+## 许可证
 
 MIT
