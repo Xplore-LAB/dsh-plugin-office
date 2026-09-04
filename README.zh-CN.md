@@ -115,3 +115,5 @@ MIT
 ## 发展策略
 
 阅读 [docs/STRATEGY.zh-CN.md](docs/STRATEGY.zh-CN.md)：邮件方向的深挖空间、巨头生态壁垒的结构性裂缝、以及本套件的目标人群（师生与不想受生态连累的办公人群）与路线图。
+
+阅读 [docs/MAIL-SCENARIOS.zh-CN.md](docs/MAIL-SCENARIOS.zh-CN.md)：邮件六大生命周期环节的场景全景地图（师生个人 + 学生组织双线），收件分诊、归档检索、数据分析三个新环节的 v1.2~v1.5 工具规划。

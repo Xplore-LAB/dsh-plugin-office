@@ -114,4 +114,4 @@ MIT
 
 ## Strategy
 
-Read [docs/STRATEGY.zh-CN.md](docs/STRATEGY.zh-CN.md) for the project strategy: why mail is still an open field, where the ecosystem moats of the big vendors crack, and who this toolkit serves (students, educators, and anyone who wants out of walled gardens).
+Read [docs/STRATEGY.zh-CN.md](docs/STRATEGY.zh-CN.md) for the project strategy, and [docs/MAIL-SCENARIOS.zh-CN.md](docs/MAIL-SCENARIOS.zh-CN.md) for the full mail-lifecycle scenario map (receive / archive / analyze) with the v1.2-v1.5 tool plans: why mail is still an open field, where the ecosystem moats of the big vendors crack, and who this toolkit serves (students, educators, and anyone who wants out of walled gardens).
