@@ -1,10 +1,12 @@
 # dsh-plugin-office
 
-**An AI office toolkit for [DeepSeek Harness (DSH)](https://github.com/deepseek-ai/deepseek-harness)** — mail merge, Word document generation, and spreadsheet pipelines, exposed as four native agent tools.
+**An AI office toolkit for [DeepSeek Harness (DSH)](https://github.com/deepseek-ai/deepseek-harness)** — mail merge, Word/PowerPoint generation, .docx template injection, and spreadsheet pipelines, exposed as six native agent tools.
 
 ```
 office_mail_preview → office_mail_send   batch personalized email, two-phase and audited
 office_docgen                           Word documents from structured blocks, batch mode
+office_pptx                             decks from slide blocks (title/bullets/table/image)
+office_template                          fill {{placeholders}} inside an existing .docx
 office_sheet                            CSV/XLSX inspect · filter · aggregate · split
 ```
 
@@ -17,6 +19,8 @@ Most AI-office tooling targets GUI suites or file-level primitives. This plugin 
 | `office_mail_preview` | "render this template against recipients.csv" | every row rendered + validated, persisted, `previewId` returned |
 | `office_mail_send` | "send preview pm_1a2b3c, confirmed" | `.eml` drafts (no SMTP) or paced SMTP delivery + JSONL audit log |
 | `office_docgen` | "generate an offer letter per row of employees.csv" | one `.docx` per row, shared `{{field}}` engine, refuses silent overwrites |
+| `office_pptx` | "make a 5-slide Q3 review deck" | one `.pptx` from slide blocks, batch mode included |
+| `office_template` | "fill contract.docx for each row of clients.csv" | placeholders replaced inside the template, split-run safe |
 | `office_sheet` | "aggregate salary by department to xlsx" | groupBy + sum/avg/min/max/count, `.csv`/`.xlsx` output |
 
 ## Install (local plugin mount)
@@ -93,9 +97,7 @@ rm -rf node_modules/@deepseek-ai node_modules/@standard-schema   # keep single r
 
 ## Roadmap
 
-- `office_pptx` — deck generation (pptxgenjs)
 - `office_inbox` — IMAP triage/summarize/reply-draft (read-only by default)
-- `.docx` template injection (replace placeholders inside an existing template file)
 
 ## Related
 

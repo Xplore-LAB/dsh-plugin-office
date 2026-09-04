@@ -1,10 +1,12 @@
 # dsh-plugin-office
 
-**[DeepSeek Harness (DSH)](https://github.com/deepseek-ai/deepseek-harness) 的 AI 办公工具套件**：邮件合并、Word 文档生成、表格流水线，四个原生 Agent 工具。
+**[DeepSeek Harness (DSH)](https://github.com/deepseek-ai/deepseek-harness) 的 AI 办公工具套件**：邮件合并、Word/PPT 生成、docx 模板注入、表格流水线，六个原生 Agent 工具。
 
 ```
 office_mail_preview → office_mail_send   批量个性化邮件，两阶段确认 + 审计日志
 office_docgen                           结构化内容块生成 Word，支持批量模式
+office_pptx                             幻灯块生成 PPT（标题/列表/表格/图片）
+office_template                          既有 .docx 模板内替换 {{占位符}}
 office_sheet                            CSV/XLSX 查看 · 筛选 · 聚合 · 拆分
 ```
 
@@ -17,6 +19,8 @@ AI 办公工具大多面向 GUI 套件或文件级操作原语。本插件走另
 | `office_mail_preview` | "用这个模板渲染 recipients.csv" | 逐行渲染 + 校验，持久化，返回 `previewId` |
 | `office_mail_send` | "发送预览 pm_1a2b3c，已确认" | 草稿模式写 `.eml`（无需 SMTP），或 SMTP 节流投递 + JSONL 审计 |
 | `office_docgen` | "按 employees.csv 每行生成一份通知书" | 每行一份 `.docx`，共用 `{{字段}}` 渲染引擎，拒绝静默覆盖 |
+| `office_pptx` | "做一份 5 页的 Q3 汇报 PPT" | 幻灯块生成 `.pptx`，同样支持批量 |
+| `office_template` | "按 clients.csv 每行填充合同模板" | 模板内占位符替换，跨 run 拆分安全 |
 | `office_sheet` | "按部门汇总工资输出 xlsx" | groupBy + sum/avg/min/max/count，输出 `.csv`/`.xlsx` |
 
 ## 安装（本地插件挂载）
@@ -93,9 +97,7 @@ rm -rf node_modules/@deepseek-ai node_modules/@standard-schema   # 保持运行�
 
 ## 路线图
 
-- `office_pptx`：演示文稿生成（pptxgenjs）
 - `office_inbox`：IMAP 收件分诊 / 摘要 / 回复草稿（默认只读）
-- `.docx` 模板注入（在既有模板文件内替换占位符）
 
 ## 相关仓库
 

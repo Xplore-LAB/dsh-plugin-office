@@ -168,6 +168,89 @@ try {
 } catch (e) { colErr = /not found/.test(e.message); }
 ok(colErr, "sheet filter rejects unknown column");
 
+// ── 9. pptx single mode ──────────────────────────────────────────────────
+const pptxTool = byName("office_pptx");
+const templateTool = byName("office_template");
+const r9 = await pptxTool.execute({
+  content: [
+    { type: "title", title: "{{quarter}} Review", subtitle: "Prepared {{date}}" },
+    { type: "bullets", title: "Highlights", items: ["Revenue up {{pct}}", "New customers"] },
+    { type: "table", title: "Numbers", header: ["Metric", "Value"], rows: [["Growth", "{{pct}}"]] }
+  ],
+  variables: { quarter: "Q3", date: "2026-09-04", pct: "12%" },
+  outputPath: "decks/q3.pptx",
+  workDir: base
+}, exec);
+const listing = execFileSync("unzip", ["-l", r9.files[0]]).toString();
+const slideCount = (listing.match(/ppt\/slides\/slide\d+\.xml/g) || []).length;
+ok(slideCount === 3, `pptx has 3 slides (got ${slideCount})`);
+const s1 = execFileSync("unzip", ["-p", r9.files[0], "ppt/slides/slide1.xml"]).toString();
+ok(s1.includes("Q3 Review"), "pptx slide1 contains rendered title");
+
+// ── 10. pptx batch mode ──────────────────────────────────────────────────
+const r10 = await pptxTool.execute({
+  content: [{ type: "title", title: "{{name}} Team" }],
+  data: [{ name: "Alpha" }, { name: "Beta" }],
+  outputDir: "decks/batch",
+  filenameTemplate: "deck_{{name}}.pptx",
+  workDir: base
+}, exec);
+ok(r10.count === 2, `pptx batch wrote 2 decks (got ${r10.count})`);
+
+// ── 11. template single mode with split-run placeholder ──────────────────
+const { Document: TplDocument, Packer: TplPacker, Paragraph: TplParagraph, TextRun: TplTextRun } = requireFromPlugin("docx");
+const tplDoc = new TplDocument({
+  sections: [{
+    children: [
+      new TplParagraph({
+        children: [
+          new TplTextRun("Dear {{"),
+          new TplTextRun("name"),
+          new TplTextRun("}},")
+        ]
+      }),
+      new TplParagraph({ children: [new TplTextRun("Your salary is {{salary}}.")] })
+    ]
+  }]
+});
+const tplBuf = await TplPacker.toBuffer(tplDoc);
+await fsp.writeFile(path.join(base, "tpl.docx"), tplBuf);
+const r11 = await templateTool.execute({
+  templateFile: "tpl.docx",
+  variables: { name: "Alice", salary: "25000" },
+  outputPath: "filled/alice.docx",
+  workDir: base
+}, exec);
+const xml11 = execFileSync("unzip", ["-p", r11.files[0], "word/document.xml"]).toString();
+ok(xml11.includes("Dear Alice,"), "template injected split-run placeholder");
+ok(xml11.includes("Your salary is 25000."), "template injected single-run placeholder");
+ok(!xml11.includes("{{"), "template output has no leftover placeholders");
+ok(r11.tokens.sort().join(",") === "name,salary", `template reports tokens (got ${r11.tokens.join(",")})`);
+
+// ── 12. template batch mode ──────────────────────────────────────────────
+const r12 = await templateTool.execute({
+  templateFile: "tpl.docx",
+  dataFile: "employees.csv",
+  outputDir: "filled/batch",
+  filenameTemplate: "letter_{{name}}.docx",
+  workDir: base
+}, exec);
+ok(r12.count === 6, `template batch wrote 6 docs (got ${r12.count})`);
+const xml12 = execFileSync("unzip", ["-p", path.join(r12.outputDir, "letter_Carol.docx"), "word/document.xml"]).toString();
+ok(xml12.includes("Your salary is 15000."), "batch template rendered row data");
+
+// ── 13. template missing token is a precise error ───────────────────────
+let tokErr = false;
+try {
+  await templateTool.execute({
+    templateFile: "tpl.docx",
+    variables: { name: "Alice" },
+    outputPath: "filled/bad.docx",
+    workDir: base
+  }, exec);
+} catch (e) { tokErr = /not provided/.test(e.message) && /\{\{salary\}\}/.test(e.message); }
+ok(tokErr, "template reports missing token precisely");
+
 console.log(`\nAll ${passed} checks passed.`);
 await fsp.rm(path.join(os.homedir(), ".dsh/office/mail/previews"), { recursive: true, force: true }).catch(() => {});
 await fsp.rm(path.join(os.homedir(), ".dsh/office/mail/drafts"), { recursive: true, force: true }).catch(() => {});
