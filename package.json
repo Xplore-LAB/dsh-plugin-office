@@ -1,7 +1,7 @@
 {
   "name": "@local/dsh-plugin-office",
-  "version": "1.0.0",
-  "description": "AI office toolkit for DeepSeek Harness: mail merge (two-phase preview/send, SMTP, audit log), Word document generation from structured blocks with batch mode, and a CSV/XLSX spreadsheet pipeline (inspect/filter/aggregate/split).",
+  "version": "1.2.0",
+  "description": "AI office toolkit for DeepSeek Harness: mail merge (two-phase preview/send, SMTP, audit log), read-only IMAP inbox fetch + deterministic triage, Word document generation from structured blocks with batch mode, a CSV/XLSX spreadsheet pipeline, PowerPoint decks, and .docx template filling.",
   "type": "module",
   "main": "lib/index.js",
   "exports": {
@@ -18,7 +18,9 @@
   "dependencies": {
     "docx": "^9.7.1",
     "exceljs": "^4.4.0",
+    "imapflow": "^1.4.1",
     "jszip": "^3.10.1",
+    "mailparser": "^3.7.0",
     "nodemailer": "^6.9.13",
     "pptxgenjs": "^4.0.1"
   }

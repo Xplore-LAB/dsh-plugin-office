@@ -1,9 +1,10 @@
 # dsh-plugin-office
 
-**An AI office toolkit for [DeepSeek Harness (DSH)](https://github.com/deepseek-ai/deepseek-harness)** — mail merge, Word/PowerPoint generation, .docx template injection, and spreadsheet pipelines, exposed as six native agent tools.
+**An AI office toolkit for [DeepSeek Harness (DSH)](https://github.com/deepseek-ai/deepseek-harness)** — mail merge, read-only IMAP inbox triage, Word/PowerPoint generation, .docx template injection, and spreadsheet pipelines, exposed as eight native agent tools.
 
 ```
 office_mail_preview → office_mail_send   batch personalized email, two-phase and audited
+office_inbox_fetch → office_inbox_triage read-only IMAP pull → todo/notice/subscription/personal
 office_docgen                           Word documents from structured blocks, batch mode
 office_pptx                             decks from slide blocks (title/bullets/table/image)
 office_template                          fill {{placeholders}} inside an existing .docx
@@ -22,6 +23,8 @@ Most AI-office tooling targets GUI suites or file-level primitives. This plugin 
 | `office_pptx` | "make a 5-slide Q3 review deck" | one `.pptx` from slide blocks, batch mode included |
 | `office_template` | "fill contract.docx for each row of clients.csv" | placeholders replaced inside the template, split-run safe |
 | `office_sheet` | "aggregate salary by department to xlsx" | groupBy + sum/avg/min/max/count, `.csv`/`.xlsx` output |
+| `office_inbox_fetch` | "pull the last 20 inbox messages" | read-only IMAP (PEEK, no `\Seen`), metadata + snippet indexed to JSONL |
+| `office_inbox_triage` | "triage what came in overnight" | deterministic buckets (todo/notice/subscription/personal) with per-message evidence |
 
 ## Install (local plugin mount)
 
@@ -44,9 +47,11 @@ rm -rf node_modules/@deepseek-ai node_modules/@standard-schema   # keep single r
         maxRecipients: 50
         maxDocRows: 100
         maxSheetRows: 20000
+        imapUser: 'me@qq.com'      # required only for office_inbox_fetch
+        imapPassEnv: DSH_IMAP_PASS # QQ/163/126 need an authorization code, not the password
 ```
 
-`office_docgen` and `office_sheet` work with zero configuration. Mail draft mode (`.eml` files) also needs no credentials; only SMTP `mode:"send"` does.
+`office_docgen` and `office_sheet` work with zero configuration. Mail draft mode (`.eml` files) also needs no credentials; only SMTP `mode:"send"` does. For inbox tools, `imapHost` is auto-derived from `imapUser`'s domain (qq/foxmail/163/126/gmail/outlook/hotmail/live presets); other providers set `imapHost` explicitly.
 
 ## Quick examples
 
@@ -88,12 +93,20 @@ rm -rf node_modules/@deepseek-ai node_modules/@standard-schema   # keep single r
 { "previewId": "pm_…", "mode": "send", "confirm": true }
 ```
 
+**Inbox triage** — fetch read-only, then bucket:
+
+```json
+{ "limit": 20, "daysBack": 1 }
+{ "sinceHours": 24 }
+```
+
 ## Safety model
 
 - Email is irreversible → mandatory preview → human approval → `confirm:true`, recipient cap, per-message pacing, JSONL audit log at `~/.dsh/office/mail/sent-log.jsonl`.
+- IMAP is strictly read-only → bodies fetched with PEEK (`\Seen` never set), no flag writes or deletes, only metadata + a short snippet indexed at `~/.dsh/office/mail/index.jsonl`.
 - Missing `{{field}}` anywhere is a hard error naming the field; documents never ship with raw placeholders.
 - File outputs never overwrite unless `overwrite:true`.
-- Batch caps (`maxDocRows`, `maxSheetRows`) bound memory and blast radius.
+- Batch caps (`maxDocRows`, `maxSheetRows`, `maxInboxFetch`) bound memory and blast radius.
 
 ## Security
 
@@ -101,7 +114,9 @@ Sending real email and touching local files are consequential actions. The toolk
 
 ## Roadmap
 
-- `office_inbox` — IMAP triage/summarize/reply-draft (read-only by default)
+- `office_archive` (v1.3) — batch `.eml` export, attachment harvesting, local index search
+- `office_stats` (v1.4) — correspondence overview, job-application tracker
+- `office_inbox_clean` (v1.5) — unsubscribe advisor (suggestions only, never silent deletion)
 
 ## Related
 

@@ -82,6 +82,7 @@
 | 项 | 选择 | 依据 |
 |---|---|---|
 | IMAP 库 | ImapFlow 1.4.1 | MIT 协议；2026-06 仍活跃发版；nodemailer 同作者（Postal Systems），与现有 SMTP 链路同源；自动处理 IMAP 扩展、支持流式拉取大邮箱；EmailEngine 的生产级引擎 |
+| MIME 解析 | mailparser 3.7 | ImapFlow 同作者（Postal Systems），配套的事实标准：RFC2047 主题解码、multipart 正文提取、附件元数据 |
 | 拉取方式 | 按需 fetch | DSH 是对话式运行时，用户问到才拉；IDLE 长连接监听属服务端形态，不在插件职责内 |
 | 索引存储 | JSONL 追加 | 与 sent-log 同模式；无数据库依赖；单文件可 grep 可审计 |
 | 凭据 | `DSH_IMAP_PASS` 环境变量 | 与 `DSH_SMTP_PASS` 同模式，不落配置文件 |
@@ -106,10 +107,10 @@
 
 | 版本 | 内容 | 状态 |
 |---|---|---|
-| v1.2 | `office_inbox_fetch` / `office_inbox_triage`：收件分诊闭环 | 待邮箱 IMAP 授权码做端到端验证 |
+| v1.2 | `office_inbox_fetch` / `office_inbox_triage`：收件分诊闭环 | **已上线**（71 项测试含 25 项 inbox 专项；真实邮箱端到端验证待用户配置 IMAP 授权码） |
 | v1.3 | `office_archive` 三件套：导出 / 附件收取 / 本地检索 | 设计已定 |
 | v1.4 | `office_stats` 两件套：往来总览 / 求职台账 | 设计已定 |
-| v1.5 | `office_inbox_clean` 订阅清理（建议清单 + 逐条确认） | 依赖 v1.2 的订阅分类数据积累 |
+| v1.5 | `office_inbox_clean` 订阅清理（建议清单 + 逐条确认） | 依赖 v1.2 的订阅分类数据积累（triage 已输出 subscriptionSenders 频率表） |
 | 远期 | 回复草稿与跟进提醒 | 视 v1.2 使用反馈决定 |
 
 一句话总结：写与发已经立住，接下来三个版本把「收、归档、分析」补齐，邮件六个生命周期环节全部覆盖，师生个人与学生组织两条场景线各自形成完整闭环。

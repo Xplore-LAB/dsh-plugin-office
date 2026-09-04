@@ -333,6 +333,90 @@ try {
 } catch (e) { imgErr = /escapes workDir/.test(e.message); }
 ok(imgErr, "pptx imagePath escape blocked");
 
+// ── 19. inbox: IMAP presets and config errors ───────────────────────────
+const inboxLib = await import(pathToFileURL(path.join(MOUNT, "lib/inbox.js")).href);
+const imapOk = inboxLib.resolveImap({ imapUser: "a@qq.com", imapPass: "pw", imapPort: 993 });
+ok(imapOk.host === "imap.qq.com" && imapOk.port === 993 && imapOk.user === "a@qq.com", "qq.com preset resolves to imap.qq.com");
+ok(inboxLib.resolveImap({ imapUser: "a@gmail.com", imapPass: "pw" }).host === "imap.gmail.com", "gmail preset resolves");
+ok(inboxLib.resolveImap({ imapUser: "a@foxmail.com", imapPass: "pw" }).host === "imap.qq.com", "foxmail preset maps to imap.qq.com");
+const inboxFetch = byName("office_inbox_fetch");
+const inboxTriage = byName("office_inbox_triage");
+let imapCfgErr = false;
+try {
+  await inboxFetch.execute({ limit: 10 }, exec);
+} catch (e) { imapCfgErr = /IMAP is not configured/.test(e.message) && /authorization code|授权码/.test(e.message); }
+ok(imapCfgErr, "fetch without imapUser fails with the authorization-code hint");
+process.env.DSH_IMAP_PASS = "pw";
+const tools4 = [];
+apply({ tools: { register: (t) => tools4.push(t) } }, Config({ imapUser: "a@example.org", imapPassEnv: "DSH_IMAP_PASS" }));
+let presetErr = false;
+try {
+  await tools4.find((t) => t.name === "office_inbox_fetch").execute({ limit: 10 }, exec);
+} catch (e) { presetErr = /no IMAP preset/.test(e.message) && /imapHost/.test(e.message); }
+ok(presetErr, "unknown domain asks for explicit imapHost");
+
+// ── 20. inbox: deterministic classification rules ───────────────────────
+const msg = (over) => ({
+  uid: 1, mailbox: "INBOX", messageId: "m1@x", date: new Date().toISOString(),
+  from: { address: "someone@example.com", name: "" }, fromDomain: "example.com",
+  subject: "", snippet: "", attachments: [], headers: {}, seen: false,
+  fetchedAt: new Date().toISOString(), ...over
+});
+const cl = (m) => inboxLib.classifyMessage(m);
+ok(cl(msg({ headers: { listUnsubscribe: true } })).category === "subscription", "list-unsubscribe header → subscription");
+ok(cl(msg({ from: { address: "noreply@service.com", name: "" }, fromDomain: "service.com" })).category === "subscription", "no-reply local part → subscription");
+ok(cl(msg({ from: { address: "x@github.com", name: "" }, fromDomain: "github.com" })).category === "subscription", "known bulk domain → subscription");
+ok(cl(msg({ subject: "面试通知：请回复确认时间" })).category === "todo", "interview keyword → todo");
+ok(cl(msg({ subject: "您的验证码是 123456" })).category === "todo", "verification code → todo");
+ok(cl(msg({ subject: "关于2026年国庆放假安排的通知" })).category === "notice", "notice keyword → notice");
+ok(cl(msg({ from: { address: "jwc@zju.edu.cn", name: "" }, fromDomain: "zju.edu.cn", subject: "本学期注册安排" })).category === "notice", ".edu.cn sender → notice");
+ok(cl(msg({ subject: "Re: 论文修改意见" })).category === "personal", "reply subject → personal");
+ok(cl(msg({ subject: "周末爬山吗" })).confidence === "low", "no rule match → personal low confidence");
+const both = cl(msg({ subject: "讲座报名截止周五" }));
+ok(both.category === "todo", "todo beats notice when both match");
+
+// ── 21. inbox: index append + dedup ─────────────────────────────────────
+const idxFile = path.join(base, "index.jsonl");
+const entries = [
+  msg({ uid: 1, messageId: "a@x" }),
+  msg({ uid: 2, messageId: "b@x" })
+];
+const w1 = await inboxLib.appendIndex(entries, idxFile);
+ok(w1.appended === 2 && w1.skippedDuplicates === 0, "index appends 2 new messages");
+const w2 = await inboxLib.appendIndex([entries[0], msg({ uid: 3, messageId: "c@x" })], idxFile);
+ok(w2.appended === 1 && w2.skippedDuplicates === 1, "index skips the duplicate messageId");
+ok((await inboxLib.loadIndex(idxFile)).length === 3, "index reads back 3 entries");
+
+// ── 22. inbox: triage over the shared index (isolated office home) ──────
+const offHome = path.join(base, "offhome");
+process.env.DSH_OFFICE_HOME = offHome;
+const nowTs = new Date().toISOString();
+const fixtures = [
+  msg({ uid: 1, messageId: "t1@x", from: { address: "hr@tencent.com", name: "Tencent HR" }, fromDomain: "tencent.com", subject: "面试邀请：请回复确认时间" }),
+  msg({ uid: 2, messageId: "t2@x", from: { address: "noreply@github.com", name: "GitHub" }, fromDomain: "github.com", subject: "[repo] PR merged" }),
+  msg({ uid: 3, messageId: "t3@x", from: { address: "jwc@zju.edu.cn", name: "教务处" }, fromDomain: "zju.edu.cn", subject: "关于国庆放假安排的通知" }),
+  msg({ uid: 4, messageId: "t4@x", from: { address: "prof@zju.edu.cn", name: "" }, fromDomain: "zju.edu.cn", subject: "Re: 论文修改意见" }),
+  msg({ uid: 5, messageId: "t5@x", from: { address: "friend@qq.com", name: "" }, fromDomain: "qq.com", subject: "周末爬山吗", date: nowTs }),
+  msg({ uid: 6, messageId: "t6@x", from: { address: "news@substack.com", name: "" }, fromDomain: "substack.com", subject: "Weekly digest", headers: { listUnsubscribe: true } })
+];
+const w3 = await inboxLib.appendIndex(fixtures, inboxLib.defaultIndexPath());
+ok(w3.appended === 6, "fixtures indexed into isolated office home");
+const r22 = await inboxTriage.execute({ sinceHours: 24, limit: 100 }, exec);
+ok(r22.total === 6, `triage saw 6 messages (got ${r22.total})`);
+ok(r22.counts.todo === 1 && r22.counts.notice === 1 && r22.counts.subscription === 2 && r22.counts.personal === 2,
+  `triage buckets 1/1/2/2 (got ${r22.counts.todo}/${r22.counts.notice}/${r22.counts.subscription}/${r22.counts.personal})`);
+ok(r22.todo[0].subject.includes("面试邀请") && r22.todo[0].evidence.length > 0, "todo carries evidence");
+ok(r22.subscriptionSenders.length === 2 && r22.subscriptionSenders.every((s) => s.count >= 1), "subscription sender table aggregates");
+ok(r22.needsReview.length === 2, `low/medium-confidence items flagged for review (got ${r22.needsReview.length})`);
+await inboxLib.appendIndex(
+  [msg({ uid: 7, messageId: "t7@x", from: { address: "old@qq.com", name: "" }, fromDomain: "qq.com", subject: "五小时前的旧邮件", date: new Date(Date.now() - 5 * 3600_000).toISOString() })],
+  inboxLib.defaultIndexPath()
+);
+const oldTri = await inboxTriage.execute({ sinceHours: 1, limit: 100 }, exec);
+ok(oldTri.total === 6, `sinceHours window filters old messages (got ${oldTri.total})`);
+delete process.env.DSH_OFFICE_HOME;
+delete process.env.DSH_IMAP_PASS;
+
 console.log(`\nAll ${passed} checks passed.`);
 await fsp.rm(path.join(os.homedir(), ".dsh/office/mail/previews"), { recursive: true, force: true }).catch(() => {});
 await fsp.rm(path.join(os.homedir(), ".dsh/office/mail/drafts"), { recursive: true, force: true }).catch(() => {});

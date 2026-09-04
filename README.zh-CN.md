@@ -1,9 +1,10 @@
 # dsh-plugin-office
 
-**[DeepSeek Harness (DSH)](https://github.com/deepseek-ai/deepseek-harness) 的 AI 办公工具套件**：邮件合并、Word/PPT 生成、docx 模板注入、表格流水线，六个原生 Agent 工具。
+**[DeepSeek Harness (DSH)](https://github.com/deepseek-ai/deepseek-harness) 的 AI 办公工具套件**：邮件合并、只读 IMAP 收件分诊、Word/PPT 生成、docx 模板注入、表格流水线，八个原生 Agent 工具。
 
 ```
 office_mail_preview → office_mail_send   批量个性化邮件，两阶段确认 + 审计日志
+office_inbox_fetch → office_inbox_triage 只读 IMAP 拉取 → 待办/通知/订阅/私信四桶分诊
 office_docgen                           结构化内容块生成 Word，支持批量模式
 office_pptx                             幻灯块生成 PPT（标题/列表/表格/图片）
 office_template                          既有 .docx 模板内替换 {{占位符}}
@@ -22,6 +23,8 @@ AI 办公工具大多面向 GUI 套件或文件级操作原语。本插件走另
 | `office_pptx` | "做一份 5 页的 Q3 汇报 PPT" | 幻灯块生成 `.pptx`，同样支持批量 |
 | `office_template` | "按 clients.csv 每行填充合同模板" | 模板内占位符替换，跨 run 拆分安全 |
 | `office_sheet` | "按部门汇总工资输出 xlsx" | groupBy + sum/avg/min/max/count，输出 `.csv`/`.xlsx` |
+| `office_inbox_fetch` | "拉取最近 20 封收件" | 只读 IMAP（PEEK，不置已读），元数据 + 摘要落 JSONL 索引 |
+| `office_inbox_triage` | "分诊昨晚收到的邮件" | 确定性规则分四桶（待办/通知/订阅/私信），每条附判定证据 |
 
 ## 安装（本地插件挂载）
 
@@ -44,9 +47,11 @@ rm -rf node_modules/@deepseek-ai node_modules/@standard-schema   # 保持运行�
         maxRecipients: 50
         maxDocRows: 100
         maxSheetRows: 20000
+        imapUser: 'me@qq.com'      # 仅 office_inbox_fetch 需要
+        imapPassEnv: DSH_IMAP_PASS # QQ/163/126 需要授权码，非登录密码
 ```
 
-`office_docgen` 与 `office_sheet` 零配置可用；邮件草稿模式（`.eml`）同样无需凭据，只有 SMTP 直发需要。
+`office_docgen` 与 `office_sheet` 零配置可用；邮件草稿模式（`.eml`）同样无需凭据，只有 SMTP 直发需要。收件工具方面，`imapHost` 会按 `imapUser` 的邮箱域自动推导（qq/foxmail/163/126/gmail/outlook/hotmail/live 预设），其他邮箱需显式配置 `imapHost`。
 
 ## 快速示例
 
@@ -88,12 +93,20 @@ rm -rf node_modules/@deepseek-ai node_modules/@standard-schema   # 保持运行�
 { "previewId": "pm_…", "mode": "send", "confirm": true }
 ```
 
+**收件分诊**：先只读拉取，再分桶：
+
+```json
+{ "limit": 20, "daysBack": 1 }
+{ "sinceHours": 24 }
+```
+
 ## 安全模型
 
 - 邮件不可撤销 → 强制预览 → 人工确认 → `confirm:true`，收件人上限、逐封节流、审计日志落 `~/.dsh/office/mail/sent-log.jsonl`。
+- IMAP 严格只读 → 正文以 PEEK 方式拉取（绝不置已读），不改旗标、不删信，本地索引只存元数据与短摘要（`~/.dsh/office/mail/index.jsonl`）。
 - 任何位置出现缺失 `{{字段}}` 即整体报错并指明字段名；文档绝不带原始占位符出仓。
 - 文件输出默认拒绝覆盖，需显式 `overwrite:true`。
-- 批量上限（`maxDocRows`、`maxSheetRows`）约束内存与影响半径。
+- 批量上限（`maxDocRows`、`maxSheetRows`、`maxInboxFetch`）约束内存与影响半径。
 
 ## 安全
 
@@ -101,7 +114,9 @@ rm -rf node_modules/@deepseek-ai node_modules/@standard-schema   # 保持运行�
 
 ## 路线图
 
-- `office_inbox`：IMAP 收件分诊 / 摘要 / 回复草稿（默认只读）
+- `office_archive`（v1.3）：批量导出 `.eml`、附件批量收取、本地索引检索
+- `office_stats`（v1.4）：往来总览、求职申请台账
+- `office_inbox_clean`（v1.5）：退订建议清单（只出建议，绝不做静默批量删除）
 
 ## 相关仓库
 
