@@ -1,10 +1,13 @@
 # dsh-plugin-office
 
-**[DeepSeek Harness (DSH)](https://github.com/deepseek-ai/deepseek-harness) 的 AI 办公工具套件**：邮件合并、只读 IMAP 收件分诊、Word/PPT 生成、docx 模板注入、表格流水线，八个原生 Agent 工具。
+**[DeepSeek Harness (DSH)](https://github.com/deepseek-ai/deepseek-harness) 的 AI 办公工具套件**：邮件合并、只读 IMAP 收件分诊、归档检索/导出/附件收取、邮件统计与求职台账、订阅清理建议、Word/PPT 生成、docx 模板注入、表格流水线，十四个原生 Agent 工具。
 
 ```
 office_mail_preview → office_mail_send   批量个性化邮件，两阶段确认 + 审计日志
 office_inbox_fetch → office_inbox_triage 只读 IMAP 拉取 → 待办/通知/订阅/私信四桶分诊
+office_archive_search / _export / _attach 本地索引检索 · .eml 导出 · 附件批量收取
+office_stats_overview / office_stats_track 往来总览 · 求职台账（CSV 导出）
+office_inbox_clean                       订阅清理建议：只出清单，绝不代为操作
 office_docgen                           结构化内容块生成 Word，支持批量模式
 office_pptx                             幻灯块生成 PPT（标题/列表/表格/图片）
 office_template                          既有 .docx 模板内替换 {{占位符}}
@@ -25,6 +28,12 @@ AI 办公工具大多面向 GUI 套件或文件级操作原语。本插件走另
 | `office_sheet` | "按部门汇总工资输出 xlsx" | groupBy + sum/avg/min/max/count，输出 `.csv`/`.xlsx` |
 | `office_inbox_fetch` | "拉取最近 20 封收件" | 只读 IMAP（PEEK，不置已读），元数据 + 摘要落 JSONL 索引 |
 | `office_inbox_triage` | "分诊昨晚收到的邮件" | 确定性规则分四桶（待办/通知/订阅/私信），每条附判定证据 |
+| `office_archive_search` | "找带附件的 offer 邮件" | 本地索引检索：发件人/主题/时间窗/附件/分类，零网络 |
+| `office_archive_export` | "把这届社团的邮件打包交接" | 匹配邮件只读重取，落 `.eml` + `index.csv` |
+| `office_archive_attach` | "把报名邮件里的简历都收下来" | 附件落 workDir 内目录，文件名去重，大小/扩展名上限 |
+| `office_stats_overview` | "这学期我收发了多少邮件" | 月度趋势、常用联系人、分类构成，纯本地统计 |
+| `office_stats_track` | "我的求职进展到哪一步了" | 自动台账 已投→笔试→面试→offer（只前进）+ 手动修正 + CSV |
+| `office_inbox_clean` | "哪些订阅值得退订" | 按发件人频率排序 + List-Unsubscribe 链接；只出建议 |
 
 ## 安装（本地插件挂载）
 
@@ -47,6 +56,8 @@ rm -rf node_modules/@deepseek-ai node_modules/@standard-schema   # 保持运行�
         maxRecipients: 50
         maxDocRows: 100
         maxSheetRows: 20000
+        maxArchiveMessages: 200    # office_archive_export / _attach 上限
+        maxAttachmentMb: 25        # _attach 单附件上限
         imapUser: 'me@qq.com'      # 仅 office_inbox_fetch 需要
         imapPassEnv: DSH_IMAP_PASS # QQ/163/126 需要授权码，非登录密码
 ```
@@ -100,13 +111,32 @@ rm -rf node_modules/@deepseek-ai node_modules/@standard-schema   # 保持运行�
 { "sinceHours": 24 }
 ```
 
+**归档与附件**：先本地检索，再批量收取：
+
+```json
+{ "from": "zju.edu.cn", "category": "todo", "hasAttachment": true }
+{ "from": "signup@", "outputDir": "exports", "workDir": "/path/to/work" }
+{ "extensions": ["pdf"], "outputDir": "resumes", "workDir": "/path/to/work" }
+```
+
+**求职台账**：自动扫描、手动修正、导出：
+
+```json
+{ "action": "scan" }
+{ "action": "update", "company": "tencent", "status": "offer", "note": "SP，11 月入职" }
+{ "action": "export", "outputPath": "track.csv", "workDir": "/path/to/work" }
+```
+
 ## 安全模型
 
 - 邮件不可撤销 → 强制预览 → 人工确认 → `confirm:true`，收件人上限、逐封节流、审计日志落 `~/.dsh/office/mail/sent-log.jsonl`。
 - IMAP 严格只读 → 正文以 PEEK 方式拉取（绝不置已读），不改旗标、不删信，本地索引只存元数据与短摘要（`~/.dsh/office/mail/index.jsonl`）。
+- 归档写入（`.eml` 导出、附件下载）限定在 workDir 内目录，文件名清洗去重，并有显式上限（`maxArchiveMessages`、`maxAttachmentMb`）。
+- 求职台账自动归并只前进（已投 → 笔试 → 面试 → offer），绝不自动降级；其余变化必须走手动 `update`。
+- 订阅清理建议只输出清单：绝不代为退订、删除、移动或发送任何东西。
 - 任何位置出现缺失 `{{字段}}` 即整体报错并指明字段名；文档绝不带原始占位符出仓。
 - 文件输出默认拒绝覆盖，需显式 `overwrite:true`。
-- 批量上限（`maxDocRows`、`maxSheetRows`、`maxInboxFetch`）约束内存与影响半径。
+- 批量上限（`maxDocRows`、`maxSheetRows`、`maxInboxFetch`、`maxArchiveMessages`）约束内存与影响半径。
 
 ## 安全
 
@@ -114,9 +144,10 @@ rm -rf node_modules/@deepseek-ai node_modules/@standard-schema   # 保持运行�
 
 ## 路线图
 
-- `office_archive`（v1.3）：批量导出 `.eml`、附件批量收取、本地索引检索
-- `office_stats`（v1.4）：往来总览、求职申请台账
-- `office_inbox_clean`（v1.5）：退订建议清单（只出建议，绝不做静默批量删除）
+邮件六大生命周期环节（写/发/收/归档/分析/清理）已全部覆盖。下一步候选方向，视真实使用反馈推进：
+
+- 回复草稿与跟进提醒（依赖收件侧数据积累成熟）
+- 结合 DSH 定时任务的每早自动分诊
 
 ## 相关仓库
 

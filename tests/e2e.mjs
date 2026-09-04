@@ -414,6 +414,117 @@ await inboxLib.appendIndex(
 );
 const oldTri = await inboxTriage.execute({ sinceHours: 1, limit: 100 }, exec);
 ok(oldTri.total === 6, `sinceHours window filters old messages (got ${oldTri.total})`);
+// ── 23. archive: local search filters ───────────────────────────────────
+const archiveLib = await import(pathToFileURL(path.join(MOUNT, "lib/archive.js")).href);
+const archiveSearch = byName("office_archive_search");
+await inboxLib.appendIndex(
+  [
+    msg({
+      uid: 8, messageId: "t8@x", from: { address: "hr@qq.com", name: "" }, fromDomain: "qq.com",
+      subject: "您的简历已收到，我们近期安排面试", attachments: [{ filename: "resume.pdf", size: 100, contentType: "application/pdf" }]
+    }),
+    msg({
+      uid: 9, messageId: "t9@x", from: { address: "campus@example-corp.com", name: "" }, fromDomain: "example-corp.com",
+      subject: "您的简历已收到，进入笔试环节"
+    }),
+    msg({
+      uid: 10, messageId: "t10@x", from: { address: "digest@substack.com", name: "" }, fromDomain: "substack.com",
+      subject: "Daily digest", headers: { listUnsubscribe: true, listUnsubscribeUrl: "<https://sub.example.com/u?x=1>" }
+    })
+  ],
+  inboxLib.defaultIndexPath()
+);
+const s23a = await archiveSearch.execute({ from: "tencent" }, exec);
+ok(s23a.matched === 1 && s23a.items[0].category === "todo", "search by sender substring + category");
+const s23b = await archiveSearch.execute({ hasAttachment: true }, exec);
+ok(s23b.matched === 1 && s23b.items[0].attachments[0] === "resume.pdf", "search hasAttachment=true finds the resume mail");
+const s23c = await archiveSearch.execute({ category: "subscription" }, exec);
+ok(s23c.matched === 3, `search category=subscription finds 3 (got ${s23c.matched})`);
+const s23d = await archiveSearch.execute({ subject: "论文" }, exec);
+ok(s23d.matched === 1 && s23d.items[0].subject.includes("论文修改意见"), "search by subject keyword");
+const s23e = await archiveSearch.execute({ from: "nomatch" }, exec);
+ok(s23e.matched === 0 && s23e.returned === 0, "search with no hits returns empty");
+
+// ── 24. archive: export/attach guardrails (no IMAP in tests) ────────────
+const archiveExport = byName("office_archive_export");
+const archiveAttach = byName("office_archive_attach");
+let escErr = false;
+try {
+  await archiveExport.execute({ outputDir: "../../tmp/escape", workDir: base }, exec);
+} catch (e) { escErr = /escapes workDir/.test(e.message); }
+ok(escErr, "archive export outputDir escape blocked");
+let escErr2 = false;
+try {
+  await archiveAttach.execute({ outputDir: "../../tmp/escape", workDir: base }, exec);
+} catch (e) { escErr2 = /escapes workDir/.test(e.message); }
+ok(escErr2, "archive attach outputDir escape blocked");
+let imapErr2 = false;
+try {
+  await archiveExport.execute({ outputDir: "exports", workDir: base }, exec);
+} catch (e) { imapErr2 = /IMAP is not configured/.test(e.message); }
+ok(imapErr2, "archive export without IMAP config fails with a clear message");
+const usedNames = new Set();
+const ef1 = archiveLib.emlFilename(fixtures[0], usedNames);
+const ef2 = archiveLib.emlFilename(fixtures[0], usedNames);
+ok(ef1 !== ef2 && ef2.includes("_2"), "eml filename dedup adds a suffix");
+
+// ── 25. stats: overview from index + send audit log ─────────────────────
+const statsTool = byName("office_stats_overview");
+await fsp.mkdir(path.join(offHome, "mail"), { recursive: true });
+await fsp.appendFile(
+  path.join(offHome, "mail", "sent-log.jsonl"),
+  [
+    { ts: new Date().toISOString(), mode: "send", to: "alice@qq.com", subject: "s1", ok: true },
+    { ts: new Date().toISOString(), mode: "send", to: "bob@qq.com", subject: "s2", ok: true },
+    { ts: new Date().toISOString(), mode: "send", to: "carol@qq.com", subject: "s3", ok: false, error: "boom" }
+  ].map((e) => JSON.stringify(e)).join("\n") + "\n",
+  "utf8"
+);
+const r25 = await statsTool.execute({ monthsBack: 6 }, exec);
+ok(r25.sentCount === 2 && r25.sendFailedCount === 1, `overview counts sent/failed (got ${r25.sentCount}/${r25.sendFailedCount})`);
+ok(r25.receivedCount >= 10, `overview counts received from the index (got ${r25.receivedCount})`);
+ok(r25.byMonth.length >= 1 && r25.byMonth[0].received > 0, "overview builds a monthly trend");
+ok(r25.topSenders.some((s) => s.from === "jwc@zju.edu.cn"), "overview lists top senders");
+ok(r25.topRecipients.some((s) => s.to === "alice@qq.com"), "overview lists top recipients");
+ok(r25.subscriptionShare > 0 && r25.subscriptionShare <= 1, "overview computes subscription share");
+
+// ── 26. stats: job-application ledger ───────────────────────────────────
+const trackTool = byName("office_stats_track");
+const r26a = await trackTool.execute({ action: "scan" }, exec);
+const tencent = r26a.companies.find((c) => c.company === "tencent");
+ok(tencent && tencent.status === "interview", "scan attributes interview@tencent.com to company tencent");
+ok(r26a.companies.some((c) => c.company === "example-corp" && c.status === "written-test"), "scan detects written-test stage");
+ok(r26a.unattributed.some((u) => u.from === "hr@qq.com"), "freemail recruiting mail lands in unattributed");
+const r26b = await trackTool.execute({ action: "scan" }, exec);
+ok(r26b.merged === 0, "re-scan merges nothing (messageId dedup)");
+await trackTool.execute({ action: "update", company: "tencent", status: "offer", note: "SP offer, 11 月入职" }, exec);
+const r26c = await trackTool.execute({ action: "scan" }, exec);
+ok(r26c.companies.find((c) => c.company === "tencent").status === "offer", "auto scan never downgrades a manual offer");
+let badStatus = false;
+let badStatusMsg = "";
+try {
+  await trackTool.execute({ action: "update", company: "x", status: "ghosted" }, exec);
+} catch (e) { badStatus = /status/i.test(e.message); badStatusMsg = e.message.slice(0, 80); }
+ok(badStatus, `manual update rejects an unknown status (${badStatusMsg})`);
+const trackCsv = path.join(base, "track.csv");
+const r26d = await trackTool.execute({ action: "export", outputPath: "track.csv", workDir: base }, exec);
+ok(r26d.rows >= 2, `ledger exports to CSV (got ${r26d.rows} rows)`);
+const trackCsvText = await fsp.readFile(trackCsv, "utf8");
+ok(trackCsvText.includes("tencent") && trackCsvText.includes("offer"), "exported CSV carries company + status");
+const r26e = await trackTool.execute({ action: "list" }, exec);
+ok(r26e.companies.length === r26d.rows, "list matches the export row count");
+
+// ── 27. clean: subscription cleanup advisor ─────────────────────────────
+const cleanTool = byName("office_inbox_clean");
+const r27a = await cleanTool.execute({ minCount: 1, daysBack: 90, limit: 20 }, exec);
+ok(r27a.distinctSenders === 3 && r27a.actionableSenders === 3, `advisor aggregates 3 bulk senders (got ${r27a.distinctSenders}/${r27a.actionableSenders})`);
+const withUrl = r27a.items.find((i) => i.sender === "digest@substack.com");
+ok(withUrl && withUrl.unsubscribe.available === true && withUrl.unsubscribe.url.includes("sub.example.com"), "advisor surfaces the List-Unsubscribe URL");
+ok(r27a.items.every((i) => typeof i.advice === "string" && i.advice.length > 0), "every advised sender carries advice text");
+ok(r27a.estimatedMailPerMonth > 0, "advisor estimates monthly subscription volume");
+const r27b = await cleanTool.execute({ minCount: 5, daysBack: 90 }, exec);
+ok(r27b.actionableSenders === 0 && r27b.belowThresholdCount === 3, "minCount threshold filters one-off senders");
+
 delete process.env.DSH_OFFICE_HOME;
 delete process.env.DSH_IMAP_PASS;
 

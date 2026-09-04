@@ -1,10 +1,13 @@
 # dsh-plugin-office
 
-**An AI office toolkit for [DeepSeek Harness (DSH)](https://github.com/deepseek-ai/deepseek-harness)** — mail merge, read-only IMAP inbox triage, Word/PowerPoint generation, .docx template injection, and spreadsheet pipelines, exposed as eight native agent tools.
+**An AI office toolkit for [DeepSeek Harness (DSH)](https://github.com/deepseek-ai/deepseek-harness)** — mail merge, read-only IMAP inbox triage, archive search/export/attachment harvest, mail statistics with a job-application ledger, a subscription cleanup advisor, Word/PowerPoint generation, .docx template injection, and spreadsheet pipelines, exposed as fourteen native agent tools.
 
 ```
 office_mail_preview → office_mail_send   batch personalized email, two-phase and audited
 office_inbox_fetch → office_inbox_triage read-only IMAP pull → todo/notice/subscription/personal
+office_archive_search / _export / _attach  local index search · .eml export · attachment harvest
+office_stats_overview / office_stats_track  mail overview · job-application ledger (CSV export)
+office_inbox_clean                       unsubscribe advisor — suggestions only, never acts
 office_docgen                           Word documents from structured blocks, batch mode
 office_pptx                             decks from slide blocks (title/bullets/table/image)
 office_template                          fill {{placeholders}} inside an existing .docx
@@ -25,6 +28,12 @@ Most AI-office tooling targets GUI suites or file-level primitives. This plugin 
 | `office_sheet` | "aggregate salary by department to xlsx" | groupBy + sum/avg/min/max/count, `.csv`/`.xlsx` output |
 | `office_inbox_fetch` | "pull the last 20 inbox messages" | read-only IMAP (PEEK, no `\Seen`), metadata + snippet indexed to JSONL |
 | `office_inbox_triage` | "triage what came in overnight" | deterministic buckets (todo/notice/subscription/personal) with per-message evidence |
+| `office_archive_search` | "find offer mails with attachments" | local index search by sender/subject/window/attachment/category, zero network |
+| `office_archive_export` | "package this term's org mail" | matched messages re-fetched read-only, written as `.eml` + `index.csv` |
+| `office_archive_attach` | "collect all résumé PDFs from the sign-up mails" | attachments saved into workDir, deduped filenames, size/extension caps |
+| `office_stats_overview` | "how much mail did I get this term" | monthly trend, top contacts, category mix from local index + audit log |
+| `office_stats_track` | "where do my job applications stand" | auto ledger applied→written-test→interview→offer (forward-only) + manual fixes + CSV |
+| `office_inbox_clean` | "which subscriptions should I kill" | per-sender frequency table with List-Unsubscribe URLs; advice only, never acts |
 
 ## Install (local plugin mount)
 
@@ -47,6 +56,8 @@ rm -rf node_modules/@deepseek-ai node_modules/@standard-schema   # keep single r
         maxRecipients: 50
         maxDocRows: 100
         maxSheetRows: 20000
+        maxArchiveMessages: 200    # office_archive_export / _attach cap
+        maxAttachmentMb: 25        # per-attachment cap for _attach
         imapUser: 'me@qq.com'      # required only for office_inbox_fetch
         imapPassEnv: DSH_IMAP_PASS # QQ/163/126 need an authorization code, not the password
 ```
@@ -100,13 +111,32 @@ rm -rf node_modules/@deepseek-ai node_modules/@standard-schema   # keep single r
 { "sinceHours": 24 }
 ```
 
+**Archive & attachments** — search locally, then harvest:
+
+```json
+{ "from": "zju.edu.cn", "category": "todo", "hasAttachment": true }
+{ "from": "signup@", "outputDir": "exports", "workDir": "/path/to/work" }
+{ "extensions": ["pdf"], "outputDir": "resumes", "workDir": "/path/to/work" }
+```
+
+**Job ledger** — auto-scan, correct, export:
+
+```json
+{ "action": "scan" }
+{ "action": "update", "company": "tencent", "status": "offer", "note": "SP, Nov start" }
+{ "action": "export", "outputPath": "track.csv", "workDir": "/path/to/work" }
+```
+
 ## Safety model
 
 - Email is irreversible → mandatory preview → human approval → `confirm:true`, recipient cap, per-message pacing, JSONL audit log at `~/.dsh/office/mail/sent-log.jsonl`.
 - IMAP is strictly read-only → bodies fetched with PEEK (`\Seen` never set), no flag writes or deletes, only metadata + a short snippet indexed at `~/.dsh/office/mail/index.jsonl`.
+- Archive writes (.eml export, attachment download) are confined to a directory inside workDir, with sanitized/deduped filenames and explicit caps (`maxArchiveMessages`, `maxAttachmentMb`).
+- The job ledger auto-merges forward-only (applied → written-test → interview → offer) and never downgrades; anything else requires a manual `update`.
+- The cleanup advisor is output-only: it never unsubscribes, deletes, moves, or sends anything.
 - Missing `{{field}}` anywhere is a hard error naming the field; documents never ship with raw placeholders.
 - File outputs never overwrite unless `overwrite:true`.
-- Batch caps (`maxDocRows`, `maxSheetRows`, `maxInboxFetch`) bound memory and blast radius.
+- Batch caps (`maxDocRows`, `maxSheetRows`, `maxInboxFetch`, `maxArchiveMessages`) bound memory and blast radius.
 
 ## Security
 
@@ -114,9 +144,10 @@ Sending real email and touching local files are consequential actions. The toolk
 
 ## Roadmap
 
-- `office_archive` (v1.3) — batch `.eml` export, attachment harvesting, local index search
-- `office_stats` (v1.4) — correspondence overview, job-application tracker
-- `office_inbox_clean` (v1.5) — unsubscribe advisor (suggestions only, never silent deletion)
+The mail lifecycle is now covered end to end (write / send / receive / archive / analyze / clean). Next candidates, driven by real usage:
+
+- Reply drafts & follow-up reminders (needs v1.2 inbox data to mature first)
+- Scheduled morning triage via DSH automation tasks
 
 ## Related
 

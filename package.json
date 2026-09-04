@@ -1,7 +1,7 @@
 {
   "name": "@local/dsh-plugin-office",
-  "version": "1.2.0",
-  "description": "AI office toolkit for DeepSeek Harness: mail merge (two-phase preview/send, SMTP, audit log), read-only IMAP inbox fetch + deterministic triage, Word document generation from structured blocks with batch mode, a CSV/XLSX spreadsheet pipeline, PowerPoint decks, and .docx template filling.",
+  "version": "1.3.0",
+  "description": "AI office toolkit for DeepSeek Harness: mail merge (two-phase preview/send, SMTP, audit log), read-only IMAP inbox fetch + deterministic triage, local archive search / .eml export / attachment download, mail + job-ledger statistics, subscription cleanup advisor, Word/PPT generation, spreadsheet pipeline, and .docx template filling.",
   "type": "module",
   "main": "lib/index.js",
   "exports": {
