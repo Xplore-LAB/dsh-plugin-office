@@ -107,3 +107,7 @@ rm -rf node_modules/@deepseek-ai node_modules/@standard-schema   # 保持运行�
 ## 许可证
 
 MIT
+
+## 发展策略
+
+阅读 [docs/STRATEGY.zh-CN.md](docs/STRATEGY.zh-CN.md)：邮件方向的深挖空间、巨头生态壁垒的结构性裂缝、以及本套件的目标人群（师生与不想受生态连累的办公人群）与路线图。

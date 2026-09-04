@@ -107,3 +107,7 @@ rm -rf node_modules/@deepseek-ai node_modules/@standard-schema   # keep single r
 ## License
 
 MIT
+
+## Strategy
+
+Read [docs/STRATEGY.zh-CN.md](docs/STRATEGY.zh-CN.md) for the project strategy: why mail is still an open field, where the ecosystem moats of the big vendors crack, and who this toolkit serves (students, educators, and anyone who wants out of walled gardens).
