@@ -95,6 +95,10 @@ rm -rf node_modules/@deepseek-ai node_modules/@standard-schema   # 保持运行�
 - 文件输出默认拒绝覆盖，需显式 `overwrite:true`。
 - 批量上限（`maxDocRows`、`maxSheetRows`）约束内存与影响半径。
 
+## 安全
+
+发送真实邮件、读写本机文件都是需要护栏的操作。套件内置：两阶段预览确认、收件人上限、24 小时滚动发送上限、可选收件域名白名单、逐封节流、邮件头注入清洗、路径边界（不可信表格单元格永远无法把工作目录之外的文件作为附件外发）；每封已投递邮件记入只追加的审计日志；凭据只走环境变量，不落配置文件。完整威胁模型与漏洞史见 [SECURITY.md](SECURITY.md)。
+
 ## 路线图
 
 - `office_inbox`：IMAP 收件分诊 / 摘要 / 回复草稿（默认只读）

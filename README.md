@@ -95,6 +95,10 @@ rm -rf node_modules/@deepseek-ai node_modules/@standard-schema   # keep single r
 - File outputs never overwrite unless `overwrite:true`.
 - Batch caps (`maxDocRows`, `maxSheetRows`) bound memory and blast radius.
 
+## Security
+
+Sending real email and touching local files are consequential actions. The toolkit ships with guardrails: a two-phase preview-then-send workflow, recipient caps, a rolling-24h send cap, an optional recipient-domain allowlist, per-message pacing, CRLF header-injection sanitizing, and path confinement so untrusted spreadsheet cells can never attach files outside your working directory. Every delivered message lands in an append-only audit log. Credentials stay in environment variables, never in config files. Full threat model and vulnerability history: [SECURITY.md](SECURITY.md).
+
 ## Roadmap
 
 - `office_inbox` — IMAP triage/summarize/reply-draft (read-only by default)

@@ -251,6 +251,88 @@ try {
 } catch (e) { tokErr = /not provided/.test(e.message) && /\{\{salary\}\}/.test(e.message); }
 ok(tokErr, "template reports missing token precisely");
 
+// ── 14. security: attachment path escape is blocked ─────────────────────
+await fsp.writeFile(path.join(base, "att.csv"),
+  "name,email,att\nMallory,mallory@evil.com,../../../../etc/hosts\nAlice,alice@example.com,ok.txt\n", "utf8");
+await fsp.writeFile(path.join(base, "ok.txt"), "fine", "utf8");
+const r14 = await mailPreview.execute({
+  subjectTemplate: "doc for {{name}}",
+  bodyTemplate: "hi {{name}}",
+  recipientsFile: "att.csv",
+  attachmentColumn: "att",
+  workDir: base
+}, exec);
+ok(r14.invalid === 1, `attachment path escape blocked (invalid=${r14.invalid})`);
+ok(r14.problems.some((p) => /escapes workDir/.test(p)), "escape problem is explicit");
+
+// ── 15. security: CRLF header injection is neutralized ──────────────────
+const r15 = await mailPreview.execute({
+  subjectTemplate: "{{inj}} report",
+  bodyTemplate: "hi",
+  nameColumn: "name",
+  recipients: [{ name: "Alice\nBcc: evil@evil.com", email: "alice@example.com", inj: "Sept\nBcc: evil@evil.com" }],
+  workDir: base
+}, exec);
+ok(r15.valid === 1, "injection row is sanitized, not dropped");
+const rec15 = JSON.parse(await fsp.readFile(
+  path.join(os.homedir(), ".dsh/office/mail/previews", `${r15.previewId}.json`), "utf8"));
+ok(!/[\r\n]/.test(rec15.rows[0].subject), "subject has no CR/LF after sanitize");
+ok(!/[\r\n]/.test(rec15.rows[0].to), "To header (display name) has no CR/LF after sanitize");
+
+// ── 16. security: duplicate recipients + domain allowlist ───────────────
+const r16 = await mailPreview.execute({
+  subjectTemplate: "s",
+  bodyTemplate: "b",
+  recipients: [{ email: "dup@example.com" }, { email: "dup@example.com" }],
+  workDir: base
+}, exec);
+ok(r16.invalid === 1 && r16.problems.some((p) => /duplicate/.test(p)), "duplicate address flagged");
+
+const tools2 = [];
+apply({ tools: { register: (t) => tools2.push(t) } }, Config({ allowDomains: ["qq.com"] }));
+const preview2 = tools2.find((t) => t.name === "office_mail_preview");
+const r16b = await preview2.execute({
+  subjectTemplate: "s", bodyTemplate: "b",
+  recipients: [{ email: "someone@qq.com" }, { email: "someone@gmail.com" }],
+  workDir: base
+}, exec);
+ok(r16b.invalid === 1 && r16b.problems.some((p) => /allowDomains/.test(p)), "domain allowlist blocks foreign domain");
+
+// ── 17. security: rolling-24h send cap ──────────────────────────────────
+const mailDir = path.join(os.homedir(), ".dsh/office/mail");
+await fsp.mkdir(mailDir, { recursive: true });
+const now = new Date().toISOString();
+await fsp.writeFile(path.join(mailDir, "sent-log.jsonl"),
+  `${JSON.stringify({ ts: now, mode: "send", ok: true })}\n${JSON.stringify({ ts: now, mode: "send", ok: true })}\n`, "utf8");
+const tools3 = [];
+apply({ tools: { register: (t) => tools3.push(t) } }, Config({
+  smtpHost: "smtp.example.com", smtpUser: "u", smtpPass: "p", fromAddress: "u@example.com",
+  dailySendCap: 3
+}));
+const preview3 = tools3.find((t) => t.name === "office_mail_preview");
+const send3 = tools3.find((t) => t.name === "office_mail_send");
+const r17p = await preview3.execute({
+  subjectTemplate: "s", bodyTemplate: "b",
+  recipients: [{ email: "a@example.com" }, { email: "b@example.com" }],
+  workDir: base
+}, exec);
+let capErr = false;
+try {
+  await send3.execute({ previewId: r17p.previewId, mode: "send", confirm: true }, exec);
+} catch (e) { capErr = /daily send cap/.test(e.message); }
+ok(capErr, "rolling-24h send cap blocks the batch (2 recent + 2 batch > cap 3)");
+
+// ── 18. security: pptx imagePath escape is blocked ──────────────────────
+let imgErr = false;
+try {
+  await pptxTool.execute({
+    content: [{ type: "image", imagePath: "../../etc/hosts" }],
+    outputPath: "decks/escape.pptx",
+    workDir: base
+  }, exec);
+} catch (e) { imgErr = /escapes workDir/.test(e.message); }
+ok(imgErr, "pptx imagePath escape blocked");
+
 console.log(`\nAll ${passed} checks passed.`);
 await fsp.rm(path.join(os.homedir(), ".dsh/office/mail/previews"), { recursive: true, force: true }).catch(() => {});
 await fsp.rm(path.join(os.homedir(), ".dsh/office/mail/drafts"), { recursive: true, force: true }).catch(() => {});
