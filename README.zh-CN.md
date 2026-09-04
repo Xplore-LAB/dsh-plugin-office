@@ -1,5 +1,8 @@
 # dsh-plugin-office
 
+> 用大白话指挥 AI 干办公活：写邮件、发通知、整理收件箱、管求职进度。数据全程留在本机。
+> 不想看技术细节？直接读 [通俗产品介绍](docs/PRODUCT-INTRO.zh-CN.md)。
+
 **[DeepSeek Harness (DSH)](https://github.com/deepseek-ai/deepseek-harness) 的 AI 办公工具套件**：邮件合并、只读 IMAP 收件分诊、归档检索/导出/附件收取、邮件统计与求职台账、订阅清理建议、Word/PPT 生成、docx 模板注入、表格流水线，十四个原生 Agent 工具。
 
 ```
