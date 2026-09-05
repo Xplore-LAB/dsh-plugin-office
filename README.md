@@ -1,6 +1,8 @@
 <div align="center">
 
-# 🕊️ Postbird 信鸽
+<img src="assets/brand/postbird-logo.png" alt="Postbird 信鸽：一只叼着密封信封的蓝色信鸽" width="144">
+
+# Postbird 信鸽
 
 **AI 替你跑邮件和文档这趟腿。跑腿而已，做主的还是你。**
 
@@ -16,6 +18,10 @@
 ---
 
 信鸽只负责把信送到，不替你拆信、不替你回信、更不会替你把信扔了。这是 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) 的办公插件（包名 `dsh-plugin-office`），十四个工具：群发邮件、整理收件箱、归档交接、求职台账、Word / PPT / 表格。QQ、163、Gmail 都能用，不挑邮箱、不收订阅费、不上传数据。
+
+<p align="center">
+  <img src="assets/brand/postbird-readme-banner.png" alt="从一句话到信鸽处理，再到邮件和文档留在本地电脑的 Postbird 工作流程" width="100%">
+</p>
 
 ```text
 你 ：拉一下最近三天的收件，哪些真需要我处理？
@@ -115,6 +121,10 @@ export DSH_IMAP_PASS='你的授权码'
 ## 信鸽不做的事
 
 送信的鸟不该替主人做主，这套工具的护栏就是照这条画的。
+
+<p align="center">
+  <img src="assets/brand/postbird-safety-boundary.svg" alt="Postbird 的四条安全边界：发信前确认、收件只读、不提供删除、数据留在本地" width="900">
+</p>
 
 - **发信必须过两道门。** 没有预览 + `confirm:true`，一封都发不出去。收件人上限、逐封节流、域名白名单、只追加台账。
 - **收信严格只读。** 正文用 PEEK 拉取（绝不标已读），不改旗标、不删信，本地只存元数据加 300 字摘要。

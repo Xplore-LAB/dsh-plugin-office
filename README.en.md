@@ -1,6 +1,8 @@
 <div align="center">
 
-# 🕊️ Postbird
+<img src="assets/brand/postbird-logo.png" alt="Postbird: a blue carrier pigeon holding a sealed envelope" width="144">
+
+# Postbird
 
 **A carrier pigeon for your email and documents. It runs the errand; you stay in charge.**
 
@@ -16,6 +18,10 @@
 ---
 
 A carrier pigeon delivers the letter. It does not open it, answer it, or throw it away. **Postbird** (package name `dsh-plugin-office`) is a native plugin for [DeepSeek Harness (DSH)](https://github.com/deepseek-ai/deepseek-harness) that turns your terminal agent into an office assistant: mail merge, inbox triage, archiving, mail statistics, a job-application ledger, a subscription cleanup advisor, plus Word / PowerPoint / spreadsheet generation. Fourteen tools, one chat window.
+
+<p align="center">
+  <img src="assets/brand/postbird-readme-banner.png" alt="From a plain-language request to Postbird handling email and documents locally" width="100%">
+</p>
 
 ## What can it do?
 
