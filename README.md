@@ -6,7 +6,7 @@
 
 **AI 替你跑邮件和文档这趟腿。跑腿而已，做主的还是你。**
 
-[![Release](https://img.shields.io/github/v/release/Xplore-LAB/dsh-plugin-office)](https://github.com/Xplore-LAB/dsh-plugin-office/releases)
+[![Release](https://img.shields.io/github/v/release/Xplore-LAB/postbird)](https://github.com/Xplore-LAB/postbird/releases)
 [![Tests](https://img.shields.io/badge/tests-100%20passing-brightgreen)](#底层实现)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 [![Platform](https://img.shields.io/badge/platform-DeepSeek%20Harness-8a2be2)](https://github.com/deepseek-ai/deepseek-harness)
@@ -43,8 +43,10 @@ AI ：已更新并写入 track.csv（12 行）。
 ## 三步装上
 
 ```bash
-# 1. 放进 DSH profile 的 @local 目录
-cp -R dsh-plugin-office ~/.dsh/profiles/<profile>/node_modules/@local/dsh-plugin-office
+# 1. 克隆仓库，放进 DSH profile 的 @local 目录
+# 仓库名是 postbird，插件包名仍是 @local/dsh-plugin-office
+git clone https://github.com/Xplore-LAB/postbird.git
+cp -R postbird ~/.dsh/profiles/<profile>/node_modules/@local/dsh-plugin-office
 cd ~/.dsh/profiles/<profile>/node_modules/@local/dsh-plugin-office
 npm install --omit=dev
 rm -rf node_modules/@deepseek-ai node_modules/@standard-schema   # 保持运行时单实例

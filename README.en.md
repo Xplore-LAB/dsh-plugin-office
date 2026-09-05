@@ -6,7 +6,7 @@
 
 **A carrier pigeon for your email and documents. It runs the errand; you stay in charge.**
 
-[![Release](https://img.shields.io/github/v/release/Xplore-LAB/dsh-plugin-office)](https://github.com/Xplore-LAB/dsh-plugin-office/releases)
+[![Release](https://img.shields.io/github/v/release/Xplore-LAB/postbird)](https://github.com/Xplore-LAB/postbird/releases)
 [![Tests](https://img.shields.io/badge/tests-100%20passing-brightgreen)](#under-the-hood)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 [![Platform](https://img.shields.io/badge/platform-DeepSeek%20Harness-8a2be2)](https://github.com/deepseek-ai/deepseek-harness)
@@ -103,7 +103,7 @@ Agent  : track.csv → status counts: interview 3, written-test 6, applied 2.
 
 Students and educators, club and org leaders, job seekers in application season, and anyone whose "office suite" is a free mailbox. Especially if you care where your mail and documents actually live.
 
-| | Webmail built-ins | Copilot-style assistants | dsh-plugin-office |
+| | Webmail built-ins | Copilot-style assistants | Postbird |
 |---|---|---|---|
 | Cost | free | monthly subscription | free (MIT), you only pay your model usage |
 | Mailboxes | the vendor's own | tied to the vendor's ecosystem | QQ / 163 / 126 / Gmail / Outlook, one setup each |
@@ -124,8 +124,10 @@ No claim of "safer than the big vendors" — the honest statement is that the th
 ## Install
 
 ```bash
-# 1. copy into your DSH profile's @local namespace
-cp -R dsh-plugin-office ~/.dsh/profiles/<profile>/node_modules/@local/dsh-plugin-office
+# 1. clone the repository into your DSH profile's @local namespace
+# The repository is postbird; the Cordis package stays @local/dsh-plugin-office.
+git clone https://github.com/Xplore-LAB/postbird.git
+cp -R postbird ~/.dsh/profiles/<profile>/node_modules/@local/dsh-plugin-office
 cd ~/.dsh/profiles/<profile>/node_modules/@local/dsh-plugin-office
 npm install --omit=dev
 rm -rf node_modules/@deepseek-ai node_modules/@standard-schema   # keep single runtime instances

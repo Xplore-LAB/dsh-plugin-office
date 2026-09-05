@@ -71,7 +71,7 @@ LLM 可能理解错意图、被提示注入诱导，或拿到过时数据。防�
 
 请通过 GitHub 私密漏洞报告（Private Vulnerability Reporting）上报：
 
-1. 打开 [github.com/Xplore-LAB/dsh-plugin-office/security/advisories](https://github.com/Xplore-LAB/dsh-plugin-office/security/advisories)
+1. 打开 [github.com/Xplore-LAB/postbird/security/advisories](https://github.com/Xplore-LAB/postbird/security/advisories)
 2. 选择「Report a vulnerability」
 
 请勿在公开 Issue 中披露未修复漏洞。期望响应时间：72 小时内确认，7 天内给出修复计划。

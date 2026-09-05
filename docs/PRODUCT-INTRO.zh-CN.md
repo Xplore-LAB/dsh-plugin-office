@@ -163,4 +163,4 @@ AI ：track.csv 按状态汇总：面试 3、笔试 5、已投 4。已写入
 
 ---
 
-*Postbird 信鸽 · https://github.com/Xplore-LAB/dsh-plugin-office · 14 个工具 · 100 项自动化测试 · MIT 开源*
+*Postbird 信鸽 · https://github.com/Xplore-LAB/postbird · 14 个工具 · 100 项自动化测试 · MIT 开源*
