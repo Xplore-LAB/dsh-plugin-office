@@ -1,8 +1,8 @@
 <div align="center">
 
-# dsh-plugin-office
+# 🕊️ Postbird
 
-**Email and documents, driven by conversation. Your data never leaves your machine.**
+**A carrier pigeon for your email and documents. It runs the errand; you stay in charge.**
 
 [![Release](https://img.shields.io/github/v/release/Xplore-LAB/dsh-plugin-office)](https://github.com/Xplore-LAB/dsh-plugin-office/releases)
 [![Tests](https://img.shields.io/badge/tests-100%20passing-brightgreen)](#under-the-hood)
@@ -15,7 +15,7 @@
 
 ---
 
-A native plugin for [DeepSeek Harness (DSH)](https://github.com/deepseek-ai/deepseek-harness) that turns your terminal agent into an office assistant: mail merge, inbox triage, archiving, mail statistics, a job-application ledger, a subscription cleanup advisor, plus Word / PowerPoint / spreadsheet generation. Fourteen tools, one chat window.
+A carrier pigeon delivers the letter. It does not open it, answer it, or throw it away. **Postbird** (package name `dsh-plugin-office`) is a native plugin for [DeepSeek Harness (DSH)](https://github.com/deepseek-ai/deepseek-harness) that turns your terminal agent into an office assistant: mail merge, inbox triage, archiving, mail statistics, a job-application ledger, a subscription cleanup advisor, plus Word / PowerPoint / spreadsheet generation. Fourteen tools, one chat window.
 
 ## What can it do?
 

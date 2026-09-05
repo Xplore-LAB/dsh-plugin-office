@@ -1,8 +1,8 @@
 <div align="center">
 
-# dsh-plugin-office
+# 🕊️ Postbird 信鸽
 
-**把「办公杂活」交给 AI，用大白话就行。你的邮件和文件，全程不出自己的电脑。**
+**AI 替你跑邮件和文档这趟腿。跑腿而已，做主的还是你。**
 
 [![Release](https://img.shields.io/github/v/release/Xplore-LAB/dsh-plugin-office)](https://github.com/Xplore-LAB/dsh-plugin-office/releases)
 [![Tests](https://img.shields.io/badge/tests-100%20passing-brightgreen)](#底层实现)
@@ -15,7 +15,7 @@
 
 ---
 
-给 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) 装的办公插件，十四个工具：群发邮件、整理收件箱、归档交接、求职台账、Word / PPT / 表格。QQ、163、Gmail 都能用，不挑邮箱、不收订阅费、不上传数据。
+信鸽只负责把信送到，不替你拆信、不替你回信、更不会替你把信扔了。这是 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) 的办公插件（包名 `dsh-plugin-office`），十四个工具：群发邮件、整理收件箱、归档交接、求职台账、Word / PPT / 表格。QQ、163、Gmail 都能用，不挑邮箱、不收订阅费、不上传数据。
 
 ```text
 你 ：拉一下最近三天的收件，哪些真需要我处理？
@@ -100,7 +100,7 @@ export DSH_IMAP_PASS='你的授权码'
 
 主流 AI 办公工具有两道墙：**订阅费**（Superhuman $30/月、Fyxer $22.5/月）和**邮箱生态**（Shortwave 只支持 Gmail，开源标杆 inbox-zero 靠 OAuth 锁死 Gmail 和 Microsoft，QQ / 163 用户整个被排除在外）。
 
-| | 网页版邮箱 | Copilot 类 | MCP 邮件服务器 | 本插件 |
+| | 网页版邮箱 | Copilot 类 | MCP 邮件服务器 | Postbird |
 |---|---|---|---|---|
 | 花费 | 免费 | 按月订阅 | 免费 | 免费（MIT） |
 | 邮箱 | 只有自家 | 绑死生态 | 通吃 | 通吃，QQ/163 一视同仁 |
@@ -112,11 +112,13 @@ export DSH_IMAP_PASS='你的授权码'
 
 诚实的短板也摆出来：没有预写回复（对手标配）、没有实时监听、单账户、只能在 DSH 里用。
 
-## 它不会做的事
+## 信鸽不做的事
+
+送信的鸟不该替主人做主，这套工具的护栏就是照这条画的。
 
 - **发信必须过两道门。** 没有预览 + `confirm:true`，一封都发不出去。收件人上限、逐封节流、域名白名单、只追加台账。
 - **收信严格只读。** 正文用 PEEK 拉取（绝不标已读），不改旗标、不删信，本地只存元数据加 300 字摘要。
-- **清理只出主意。** 退订、删除、移动，一概不代劳。整个套件**没有任何删除邮件的工具**。
+- **清理只出主意。** 退订、删除、移动，一概不代劳。Postbird **没有任何删除邮件的工具**，想删也删不了。
 - **文件不出界。** 导出和附件下载锁死工作目录，带显式上限；表格里的恶意单元格没法把目录外的文件当附件发出去。
 - **出错就大声报。** 缺 `{{字段}}` 直接报错并指名字段，绝不带着占位符出仓；输出绝不悄悄覆盖。
 - **密码不落盘。** SMTP 和 IMAP 凭据只从环境变量读。
@@ -212,11 +214,13 @@ config:
 
 **QQ / 163 / 126 能用吗？** 能。这些邮箱对免费用户开放完整 SMTP 和 IMAP，去邮箱设置里生成一个授权码即可（和登录密码不是一回事）。服务器地址自动推导，不用手填。
 
-**它会不会不经我同意就发信、删信？** 不会。发信必须走「预览 → 你点头 → `confirm:true`」；收件侧设计上就是只读；订阅清理只输出报告。整个套件没有删除邮件的工具，改配置也绕不过去。
+**它会不会不经我同意就发信、删信？** 不会。发信必须走「预览 → 你点头 → `confirm:true`」；收件侧设计上就是只读；订阅清理只输出报告。Postbird 里根本没有删除邮件的工具，改配置也绕不过去。
 
 **我的邮件存到哪了？** 本机 `~/.dsh/office/mail/` 下的 JSONL 索引，只有元数据和 300 字摘要。全文和附件只在你明确导出时才落盘，不上传任何地方。
 
-**为什么不直接用 Copilot 或网页版邮箱？** 它们够用就继续用。这套是给被它们跳过的人准备的：付费生态之外的免费邮箱用户，以及想让过程看得见、数据留本地的人。完整分析见 [STRATEGY.zh-CN.md](docs/STRATEGY.zh-CN.md)。
+**为什么不直接用 Copilot 或网页版邮箱？** 它们够用就继续用。Postbird 是给被它们跳过的人准备的：付费生态之外的免费邮箱用户，以及想让过程看得见、数据留本地的人。完整分析见 [STRATEGY.zh-CN.md](docs/STRATEGY.zh-CN.md)。
+
+**为什么叫信鸽？** 信鸽只管把信送到，不拆、不回、不扔。这套工具的边界跟这只鸟一样：跑腿全包，做主权归你。
 
 </details>
 
@@ -230,7 +234,7 @@ config:
 
 ## 相关
 
-[word-mail-merge-batch-sender](https://github.com/Xplore-LAB/word-mail-merge-batch-sender)（邮件合并的 VBA/Outlook 初版，本插件是其继任者） · [dsh-plugin-asmemory](https://github.com/Xplore-LAB/dsh-plugin-asmemory)（DSH 持久记忆插件）
+[word-mail-merge-batch-sender](https://github.com/Xplore-LAB/word-mail-merge-batch-sender)（邮件合并的 VBA/Outlook 初版，Postbird 是它的继任者） · [dsh-plugin-asmemory](https://github.com/Xplore-LAB/dsh-plugin-asmemory)（DSH 持久记忆插件）
 
 延伸阅读：[产品介绍](docs/PRODUCT-INTRO.zh-CN.md)（对话实录版） · [竞品对比](docs/COMPETITORS.zh-CN.md) · [发展策略](docs/STRATEGY.zh-CN.md) · [场景全景地图](docs/MAIL-SCENARIOS.zh-CN.md)
 
