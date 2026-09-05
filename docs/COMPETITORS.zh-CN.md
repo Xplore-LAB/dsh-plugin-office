@@ -10,7 +10,7 @@
 | 国内免费生态 | 网易邮箱大师、QQ 邮箱 AI | 免费（VIP 去广告） | 国内邮箱为主，兼容主流 | 厂商云端 | 手机/桌面 App |
 | 开源自托管 Web 应用 | inbox-zero（11.7k star） | 免费（托管版 $18/月） | 仅 Gmail / Microsoft（OAuth） | 自己服务器 | 网页应用 |
 | MCP 邮件服务器 | email-mcp、mcp-email-server 等 | 免费 | 任意 IMAP/SMTP | 本机 | 给 Agent 供工具 |
-| **Postbird 信鸽** | | **免费（MIT）** | **QQ/163/126/Gmail/Outlook（授权码）** | **自己电脑** | **DSH 原生插件** |
+| **Postbird for DSH** | | **免费（MIT）** | **QQ/163/126/Gmail/Outlook（授权码）** | **自己电脑** | **DSH 原生插件** |
 
 ## 二、逐类细看
 

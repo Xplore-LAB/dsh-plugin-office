@@ -6,18 +6,20 @@
 
 **A carrier pigeon for your email and documents. It runs the errand; you stay in charge.**
 
+<sub><b>Postbird for DeepSeek Harness</b> — an independent open-source project, not affiliated with, endorsed by, or connected to Mailbird (Contenga International) or Postbird (Mailstreet, Belgium).</sub>
+
 [![Release](https://img.shields.io/github/v/release/Xplore-LAB/postbird)](https://github.com/Xplore-LAB/postbird/releases)
 [![Tests](https://img.shields.io/badge/tests-100%20passing-brightgreen)](#under-the-hood)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 [![Platform](https://img.shields.io/badge/platform-DeepSeek%20Harness-8a2be2)](https://github.com/deepseek-ai/deepseek-harness)
 
-[简体中文](README.md) · English · [产品介绍（通俗版）](docs/PRODUCT-INTRO.zh-CN.md)
+[简体中文](README.md) · English · [产品介绍（通俗版）](docs/PRODUCT-INTRO.zh-CN.md) · [Naming & trademarks](docs/BRAND.zh-CN.md)
 
 </div>
 
 ---
 
-A carrier pigeon delivers the letter. It does not open it, answer it, or throw it away. **Postbird** (package name `dsh-plugin-office`) is a native plugin for [DeepSeek Harness (DSH)](https://github.com/deepseek-ai/deepseek-harness) that turns your terminal agent into an office assistant: mail merge, inbox triage, archiving, mail statistics, a job-application ledger, a subscription cleanup advisor, plus Word / PowerPoint / spreadsheet generation. Fourteen tools, one chat window.
+A carrier pigeon delivers the letter. It does not open it, answer it, or throw it away. **Postbird for DeepSeek Harness** (package name `dsh-plugin-office`) is a native plugin for [DeepSeek Harness (DSH)](https://github.com/deepseek-ai/deepseek-harness) that turns your terminal agent into an office assistant: mail merge, inbox triage, archiving, mail statistics, a job-application ledger, a subscription cleanup advisor, plus Word / PowerPoint / spreadsheet generation. Fourteen tools, one chat window.
 
 <p align="center">
   <img src="assets/brand/postbird-readme-banner.png" alt="From a plain-language request to Postbird handling email and documents locally" width="100%">
@@ -103,7 +105,7 @@ Agent  : track.csv → status counts: interview 3, written-test 6, applied 2.
 
 Students and educators, club and org leaders, job seekers in application season, and anyone whose "office suite" is a free mailbox. Especially if you care where your mail and documents actually live.
 
-| | Webmail built-ins | Copilot-style assistants | Postbird |
+| | Webmail built-ins | Copilot-style assistants | Postbird for DSH |
 |---|---|---|---|
 | Cost | free | monthly subscription | free (MIT), you only pay your model usage |
 | Mailboxes | the vendor's own | tied to the vendor's ecosystem | QQ / 163 / 126 / Gmail / Outlook, one setup each |
@@ -266,8 +268,8 @@ The mail lifecycle is covered end to end (write / send / receive / archive / ana
 - [word-mail-merge-batch-sender](https://github.com/Xplore-LAB/word-mail-merge-batch-sender) — the original VBA/Outlook edition of the mail merge; this plugin is its DSH successor
 - [dsh-plugin-asmemory](https://github.com/Xplore-LAB/dsh-plugin-asmemory) — persistent memory plugin for DSH
 
-Further reading: [STRATEGY](docs/STRATEGY.zh-CN.md) (why mail is still an open field and where the big vendors' moats crack) · [scenario map](docs/MAIL-SCENARIOS.zh-CN.md) (all six lifecycle segments) · [product intro in plain Chinese](docs/PRODUCT-INTRO.zh-CN.md).
+Further reading: [STRATEGY](docs/STRATEGY.zh-CN.md) (why mail is still an open field and where the big vendors' moats crack) · [scenario map](docs/MAIL-SCENARIOS.zh-CN.md) (all six lifecycle segments) · [product intro in plain Chinese](docs/PRODUCT-INTRO.zh-CN.md) · [naming & trademark notes](docs/BRAND.zh-CN.md).
 
 ## License
 
-MIT
+Code is MIT. No trademark claim is made over the name Postbird; run your own clearance search before shipping it commercially.

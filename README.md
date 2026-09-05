@@ -6,12 +6,14 @@
 
 **AI 替你跑邮件和文档这趟腿。跑腿而已，做主的还是你。**
 
+<sub><b>Postbird for DeepSeek Harness</b> · 独立开源项目，与 Mailbird（Contenga International）、Postbird（Mailstreet，比利时）无任何隶属、背书或合作关系</sub>
+
 [![Release](https://img.shields.io/github/v/release/Xplore-LAB/postbird)](https://github.com/Xplore-LAB/postbird/releases)
 [![Tests](https://img.shields.io/badge/tests-100%20passing-brightgreen)](#底层实现)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 [![Platform](https://img.shields.io/badge/platform-DeepSeek%20Harness-8a2be2)](https://github.com/deepseek-ai/deepseek-harness)
 
-简体中文 · [English](README.en.md) · [产品介绍](docs/PRODUCT-INTRO.zh-CN.md) · [竞品对比](docs/COMPETITORS.zh-CN.md)
+简体中文 · [English](README.en.md) · [产品介绍](docs/PRODUCT-INTRO.zh-CN.md) · [竞品对比](docs/COMPETITORS.zh-CN.md) · [命名规范](docs/BRAND.zh-CN.md)
 
 </div>
 
@@ -108,7 +110,7 @@ export DSH_IMAP_PASS='你的授权码'
 
 主流 AI 办公工具有两道墙：**订阅费**（Superhuman $30/月、Fyxer $22.5/月）和**邮箱生态**（Shortwave 只支持 Gmail，开源标杆 inbox-zero 靠 OAuth 锁死 Gmail 和 Microsoft，QQ / 163 用户整个被排除在外）。
 
-| | 网页版邮箱 | Copilot 类 | MCP 邮件服务器 | Postbird |
+| | 网页版邮箱 | Copilot 类 | MCP 邮件服务器 | Postbird for DSH |
 |---|---|---|---|---|
 | 花费 | 免费 | 按月订阅 | 免费 | 免费（MIT） |
 | 邮箱 | 只有自家 | 绑死生态 | 通吃 | 通吃，QQ/163 一视同仁 |
@@ -234,6 +236,8 @@ config:
 
 **为什么叫信鸽？** 信鸽只管把信送到，不拆、不回、不扔。这套工具的边界跟这只鸟一样：跑腿全包，做主权归你。
 
+**跟 Mailbird 是一家吗？** 毫无关系。Mailbird 是 Contenga International 的商业桌面邮件客户端，Postbird 是跑在 DeepSeek Harness 里的开源插件。名字撞车纯属 bird 词根太好用，因此我们对外一律写作 Postbird for DeepSeek Harness，并在首屏标注免责声明。完整排查见 [BRAND.zh-CN.md](docs/BRAND.zh-CN.md)。
+
 </details>
 
 ## 底层实现
@@ -248,8 +252,8 @@ config:
 
 [word-mail-merge-batch-sender](https://github.com/Xplore-LAB/word-mail-merge-batch-sender)（邮件合并的 VBA/Outlook 初版，Postbird 是它的继任者） · [dsh-plugin-asmemory](https://github.com/Xplore-LAB/dsh-plugin-asmemory)（DSH 持久记忆插件）
 
-延伸阅读：[产品介绍](docs/PRODUCT-INTRO.zh-CN.md)（对话实录版） · [竞品对比](docs/COMPETITORS.zh-CN.md) · [发展策略](docs/STRATEGY.zh-CN.md) · [场景全景地图](docs/MAIL-SCENARIOS.zh-CN.md)
+延伸阅读：[产品介绍](docs/PRODUCT-INTRO.zh-CN.md)（对话实录版） · [竞品对比](docs/COMPETITORS.zh-CN.md) · [发展策略](docs/STRATEGY.zh-CN.md) · [场景全景地图](docs/MAIL-SCENARIOS.zh-CN.md) · [命名规范](docs/BRAND.zh-CN.md)
 
 ## 许可证
 
-MIT
+代码 MIT。Postbird 这一名称未主张商标权益，若你打算拿去做商业发行，请先自行完成商标检索，背景见 [BRAND.zh-CN.md](docs/BRAND.zh-CN.md)。

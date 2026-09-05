@@ -1,4 +1,4 @@
-# Postbird 信鸽 · 产品介绍
+# Postbird for DSH（信鸽）· 产品介绍
 
 > 一句话：在你的 DeepSeek Harness 里养一只信鸽，你用大白话提要求，它替你写邮件、发通知、整理收件箱、管求职进度，数据全留在自己电脑上。跑腿全包，做主的还是你。
 
@@ -163,4 +163,4 @@ AI ：track.csv 按状态汇总：面试 3、笔试 5、已投 4。已写入
 
 ---
 
-*Postbird 信鸽 · https://github.com/Xplore-LAB/postbird · 14 个工具 · 100 项自动化测试 · MIT 开源*
+*Postbird for DeepSeek Harness · https://github.com/Xplore-LAB/postbird · 14 个工具 · 100 项自动化测试 · MIT 开源 · 与 Mailbird（Contenga International）及 Postbird（Mailstreet，比利时）无任何关联*
