@@ -12,6 +12,8 @@
 [![Tests](https://img.shields.io/badge/tests-100%20passing-brightgreen)](#底层实现)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 [![Platform](https://img.shields.io/badge/platform-DeepSeek%20Harness-8a2be2)](https://github.com/deepseek-ai/deepseek-harness)
+[![Tools](https://img.shields.io/badge/tools-14-blueviolet)](#十四个工具)
+[![Node](https://img.shields.io/badge/node-%3E%3D%2020-brightgreen)](https://nodejs.org)
 
 简体中文 · [English](README.en.md) · [产品介绍](docs/PRODUCT-INTRO.zh-CN.md) · [竞品对比](docs/COMPETITORS.zh-CN.md) · [命名规范](docs/BRAND.zh-CN.md)
 
@@ -73,6 +75,29 @@ export DSH_IMAP_PASS='你的授权码'
 
 完整配置项见下方[折叠区](#完整配置项)。
 
+## 先跑通，再谈配置
+
+装完先别急着配邮箱。把 DSH 的工作目录切到仓库的 `example/`，直接说人话：
+
+```text
+你 ：看看 example/employees.csv 有哪些列，各是什么类型
+你 ：按部门汇总薪资和奖金，输出到 by_dept.xlsx
+你 ：按 example/employees.csv 每行生成一份工资通知，标题写「{{name}} 的工资通知」，输出到 letters/
+```
+
+三句都不需要任何凭据、不联网、不碰邮箱，几秒钟出结果。实际输出长这样：
+
+```text
+employees.csv: 6 rows, 4 columns (2 numeric).
+Aggregate by department: 3 group(s) → by_dept.xlsx
+  Engineering   salary 75000   bonus 8700
+  HR            salary 14000   bonus 1000
+  Sales         salary 32000   bonus 3300
+office_docgen: 6 files → letters/notice_Alice.docx … letters/notice_Frank.docx
+```
+
+文件落地就说明插件挂载成功了，再去配 SMTP / IMAP 也不迟。
+
 ## 六件它替你干的事
 
 **给 40 个人各发一封不同的信。**「按 `members.csv` 发中秋通知，称呼用『昵称』列，附件用『附件』列，先给我看预览。」逐行渲染、你点头才发、1.5 秒一封节流、发完留台账。Word 模板加 Excel 名单加 Outlook 合并那套三件套，可以扔了。
@@ -86,6 +111,17 @@ export DSH_IMAP_PASS='你的授权码'
 **看看谁在轰炸你的邮箱。**「哪些订阅值得退？」按发件人排频率榜，带退订链接的直接列出来。**只出主意**，退订、删除、移动一概不代劳。
 
 **顺手的文档四件套。** 按 CSV 每行生成一份 Word 通知书；做一份带表格和图片的 PPT；往现成 `.docx` 模板里填 `{{占位符}}`；表格查看、筛选、汇总、拆分（先摸清列结构再动手）。
+
+## 你是哪种人，先跑哪一句
+
+| 你的处境 | 直接复制这句话 |
+|---|---|
+| 学生，通知和选课邮件淹过来 | 拉最近三天的收件，把需要我回复的挑出来 |
+| 秋招春招投了一堆公司 | 扫收件箱，把投过的公司整理成台账，导出 CSV |
+| 社团换届要交接 | 把这一届带附件的邮件全导出来，附件收进 handover/ |
+| HR / 行政，发工资条发通知 | 按 employees.csv 发工资条，称呼用 name 列，先给我看预览 |
+| 教师助教，按名单批量通知 | 用 notice.docx 模板，按 roster.csv 每人生成一份通知书 |
+| 开发数据，表格要清洗 | 看看 data.csv 的结构，筛出 salary 大于 16000 的行，存成 xlsx |
 
 ## 十四个工具
 
@@ -139,25 +175,58 @@ export DSH_IMAP_PASS='你的授权码'
 
 不宣称「比大厂更安全」，准确的说法是威胁面不同，而且每一块都握在你自己手里。完整威胁模型见 [SECURITY.md](SECURITY.md)。
 
+## 数据落在哪，怎么卸干净
+
+```text
+~/.dsh/office/mail/
+├── index.jsonl        收件索引：日期、发件人、主题、300 字摘要、附件名、分类证据
+├── sent-log.jsonl     发信台账，只追加
+├── job-track.json     求职台账
+├── previews/          邮件合并的预览快照
+└── drafts/<id>/       草稿模式产出的 .eml
+```
+
+只有 `index.jsonl` 含摘要，邮件全文和附件在你明确导出时才落盘到工作目录。想清空收件索引：`rm -rf ~/.dsh/office/mail`。卸插件：删掉 `node_modules/@local/dsh-plugin-office` 目录，并从 `cordis.patch.yml` 里移除 `tool-office` 那一段。
+
 <details id="完整配置项">
 <summary><b>完整配置项</b></summary>
 
+下面列出全部默认值，只写你要改的那几行即可。
+
 ```yaml
 config:
-  smtpHost: smtp.qq.com        # 仅真发信需要
+  # 发信（真发才需要；草稿模式一个都不用配）
+  smtpHost: smtp.qq.com        # 留空则只能出草稿 .eml
+  smtpPort: 465                # 465 隐式 TLS，587 STARTTLS
+  smtpSecure: true
   smtpUser: ''
-  smtpPassEnv: DSH_SMTP_PASS
+  smtpPassEnv: DSH_SMTP_PASS   # QQ/163/126 填授权码，不是登录密码
   fromAddress: ''
+  fromName: ''
+  replyTo: ''
   maxRecipients: 50            # 单批收件人上限
-  sendIntervalMs: 1500         # 逐封节流
+  sendIntervalMs: 1500         # 两封之间的最小间隔
+  dailySendCap: 200            # 滚动 24 小时发信上限，防进黑名单
+  allowDomains: []             # 空 = 不限；填 ['edu.cn'] 则其他域名在预览阶段就拦下
+  previewTtlMinutes: 60        # 预览超时必须重做，防止预览完隔很久才发
+
+  # 文档与表格
   maxDocRows: 100              # 单批文档生成上限
   maxSheetRows: 20000          # 单次读表上限
-  maxArchiveMessages: 200      # 归档导出 / 附件收取上限
-  maxAttachmentMb: 25          # 单附件大小上限
-  imapUser: 'me@qq.com'        # 仅收信需要
+
+  # 收信（office_inbox_* 才需要）
+  imapUser: 'me@qq.com'
   imapPassEnv: DSH_IMAP_PASS
-  imapHost: ''                 # 留空则按邮箱后缀自动推导
+  imapHost: ''                 # 留空按邮箱后缀自动推导
+  imapPort: 993
+  imapMailbox: INBOX
+  maxInboxFetch: 200           # 单次拉取上限
+  inboxSnippetChars: 300       # 本地索引里存的摘要长度
+  maxArchiveMessages: 200      # 归档导出 / 附件收取上限
+  maxAttachmentMb: 25          # 单附件大小上限，超出跳过并报告
 ```
+
+调试时可设 `DSH_OFFICE_HOME=/tmp/office-test`，数据目录会整体改道，不碰真实数据。
 
 </details>
 
@@ -240,13 +309,64 @@ config:
 
 </details>
 
+<details>
+<summary><b>排障</b></summary>
+
+| 现象 | 原因 | 怎么办 |
+|---|---|---|
+| DSH 启动报 schemastery / dsh-tools 相关错 | 插件目录里装进了第二份运行时 | 删掉 `node_modules/@deepseek-ai` 和 `node_modules/@standard-schema` |
+| 发信报 `535 Login Fail` | 用了登录密码 | QQ / 163 / 126 要在邮箱设置里开启 SMTP 服务，生成授权码填进 `DSH_SMTP_PASS` |
+| IMAP 连不上或认证失败 | IMAP 服务没开，或密码填错 | 邮箱设置里单独开启 IMAP，授权码填进 `DSH_IMAP_PASS` |
+| 提示预览已过期 | 默认 60 分钟失效 | 重新预览一次，或调大 `previewTtlMinutes` |
+| 附件报 `escapes workDir` | 附件必须放在工作目录内 | 把附件挪进 workDir，用相对路径引用 |
+| 提示单批超限 | `maxRecipients` 50、`maxDocRows` 100 | 分批跑，或改配置 |
+| 大表读不动 | `maxSheetRows` 上限 20000 | 先 `inspect` 摸清列，再 `filter` 缩小范围后 `aggregate` |
+| 工具根本没出现 | `cordis.patch.yml` 缩进或 profile 路径错 | 核对 `- insert:` 的缩进与 `id` / `name` 拼写，profile 名是否填对 |
+
+</details>
+
 ## 底层实现
 
 原生 Cordis 插件（`defineTool`，无 MCP 中转）。SMTP 走 nodemailer，IMAP 走 ImapFlow + mailparser（同属 Postal Systems 血统，MIT）。文档走 docx / pptxgenjs / exceljs。100 项端到端测试覆盖全部工具和安全护栏：路径逃逸、邮件头注入、覆盖拒绝、台账只前进。
 
+## 给开发者
+
+```text
+lib/index.js     14 个工具的注册、schema 与发信护栏
+lib/inbox.js     IMAP 收信、本地索引、确定性分诊
+lib/archive.js   归档检索 / .eml 导出 / 附件收取
+lib/stats.js     邮件统计、求职台账
+lib/clean.js     订阅频率榜与退订建议
+lib/docgen.js    按数据行批量生成 docx
+lib/pptxgen.js   幻灯块生成 pptx
+lib/sheet.js     表格 inspect / filter / aggregate / split
+lib/docx-inject.js 模板占位符注入（跨 run 拆分安全）
+lib/render.js    变量渲染与校验
+tests/e2e.mjs    100 项端到端断言
+```
+
+跑测试（在挂载后的插件目录里，Node >= 20）：
+
+```bash
+cp tests/e2e.mjs ~/.dsh/profiles/web/node_modules/@local/dsh-plugin-office/
+cd ~/.dsh/profiles/web/node_modules/@local/dsh-plugin-office && node e2e.mjs
+```
+
+测试用 `DSH_OFFICE_HOME` 指向临时目录，不碰你的真实邮件数据。
+
+新增工具有三条 schema 硬规则，违反时只在真实启动阶段暴露（`--dump-config` 或 web 服务起 200 才报错，静态检查抓不到）：
+
+1. object 型的 `items` 必须写 `additionalProperties: true`
+2. 数组 `items` 内部禁用 `additionalProperties: false`
+3. `additionalProperties` 只接受布尔值
+
+改完用 `--dump-config` 起一次 DSH，确认 14 个工具全部装载且日志无 error。
+
 ## 路线图
 
 邮件的六个环节（写 / 发 / 收 / 归档 / 分析 / 清理）已全部覆盖。下一步看真实使用反馈：回复草稿与跟进提醒、结合 DSH 定时任务的每早自动分诊。
+
+各版本的变更说明见 [Releases](https://github.com/Xplore-LAB/postbird/releases)。
 
 ## 相关
 

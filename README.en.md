@@ -12,6 +12,8 @@
 [![Tests](https://img.shields.io/badge/tests-100%20passing-brightgreen)](#under-the-hood)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 [![Platform](https://img.shields.io/badge/platform-DeepSeek%20Harness-8a2be2)](https://github.com/deepseek-ai/deepseek-harness)
+[![Tools](https://img.shields.io/badge/tools-14-blueviolet)](#the-14-tools)
+[![Node](https://img.shields.io/badge/node-%3E%3D%2020-brightgreen)](https://nodejs.org)
 
 [简体中文](README.md) · English · [产品介绍（通俗版）](docs/PRODUCT-INTRO.zh-CN.md) · [Naming & trademarks](docs/BRAND.zh-CN.md)
 
@@ -105,6 +107,15 @@ Agent  : track.csv → status counts: interview 3, written-test 6, applied 2.
 
 Students and educators, club and org leaders, job seekers in application season, and anyone whose "office suite" is a free mailbox. Especially if you care where your mail and documents actually live.
 
+| If you are | Copy this into the chat |
+|---|---|
+| A student drowning in notices | Pull the last three days of mail and pick out the ones that need a reply |
+| Applying for jobs this season | Scan my inbox, build a ledger of every company I applied to, export CSV |
+| Handing a club to the next committee | Export every mail with attachments from this term, save the files into handover/ |
+| HR or admin sending pay slips | Send pay slips from employees.csv, use the name column as the greeting, show me a preview first |
+| A teacher with a roster | Fill notice.docx once per row of roster.csv |
+| A developer cleaning data | Show me the structure of data.csv, keep rows where salary > 16000, save as xlsx |
+
 | | Webmail built-ins | Copilot-style assistants | Postbird for DSH |
 |---|---|---|---|
 | Cost | free | monthly subscription | free (MIT), you only pay your model usage |
@@ -122,6 +133,19 @@ No claim of "safer than the big vendors" — the honest statement is that the th
 - **Files stay in bounds.** Exports and attachment downloads are confined to your working directory with explicit caps; untrusted spreadsheet cells can never reach files outside it.
 - **Failures are loud.** A missing `{{field}}` is a hard error naming the field; documents never ship with raw placeholders; outputs never silently overwrite.
 - **Credentials stay out of files.** SMTP and IMAP secrets come from environment variables only.
+
+## Where data lands, and how to remove it
+
+```text
+~/.dsh/office/mail/
+├── index.jsonl         mail index: date, sender, subject, 300-char snippet, attachment names, triage evidence
+├── sent-log.jsonl      delivery ledger, append-only
+├── job-track.json      job-application ledger
+├── previews/           mail-merge preview snapshots
+└── drafts/<id>/        .eml files produced in draft mode
+```
+
+Only `index.jsonl` holds a snippet. Full bodies and attachments touch disk solely when you explicitly export them, into your working directory. Wipe the index with `rm -rf ~/.dsh/office/mail`. Uninstall by deleting `node_modules/@local/dsh-plugin-office` and removing the `tool-office` block from `cordis.patch.yml`.
 
 ## Install
 
@@ -153,6 +177,69 @@ rm -rf node_modules/@deepseek-ai node_modules/@standard-schema   # keep single r
 ```
 
 **Zero-config subset**: documents, spreadsheets, decks, archive search, stats, and mail drafts (`.eml`) work with no credentials at all. Only real SMTP sending and IMAP fetching need authorization codes.
+
+### Smoke test before you configure anything
+
+Point DSH at the repository's `example/` directory and just ask:
+
+```text
+you: what columns does example/employees.csv have, and what types are they?
+you: aggregate salary and bonus by department, write by_dept.xlsx
+you: generate one pay notice per row of example/employees.csv, title it "Pay notice for {{name}}", output to letters/
+```
+
+No credentials, no network, no mailbox. Real output, a few seconds later:
+
+```text
+employees.csv: 6 rows, 4 columns (2 numeric).
+Aggregate by department: 3 group(s) → by_dept.xlsx
+  Engineering   salary 75000   bonus 8700
+  HR            salary 14000   bonus 1000
+  Sales         salary 32000   bonus 3300
+office_docgen: 6 files → letters/notice_Alice.docx … letters/notice_Frank.docx
+```
+
+Once files land on disk the plugin is mounted correctly, and configuring SMTP / IMAP becomes worth your time.
+
+<details>
+<summary><b>Full configuration</b> (all defaults; override only what you need)</summary>
+
+```yaml
+config:
+  # Sending (needed only for real delivery; draft mode needs none of it)
+  smtpHost: smtp.qq.com        # empty = drafts only
+  smtpPort: 465                # 465 implicit TLS, 587 STARTTLS
+  smtpSecure: true
+  smtpUser: ''
+  smtpPassEnv: DSH_SMTP_PASS   # QQ/163/126: authorization code, not the login password
+  fromAddress: ''
+  fromName: ''
+  replyTo: ''
+  maxRecipients: 50            # per-batch cap
+  sendIntervalMs: 1500         # minimum pacing between two deliveries
+  dailySendCap: 200            # rolling 24h delivery cap, anti-blacklist guard
+  allowDomains: []             # empty = no limit; ["edu.cn"] blocks other domains at preview
+  previewTtlMinutes: 60        # a stale preview must be regenerated
+
+  # Documents and spreadsheets
+  maxDocRows: 100
+  maxSheetRows: 20000
+
+  # Receiving (office_inbox_* only)
+  imapUser: 'me@qq.com'
+  imapPassEnv: DSH_IMAP_PASS
+  imapHost: ''                 # empty = derive from the address domain
+  imapPort: 993
+  imapMailbox: INBOX
+  maxInboxFetch: 200
+  inboxSnippetChars: 300
+  maxArchiveMessages: 200
+  maxAttachmentMb: 25          # larger attachments are skipped and reported
+```
+
+Set `DSH_OFFICE_HOME=/tmp/office-test` to relocate the entire data directory while debugging.
+
+</details>
 
 <details>
 <summary><b>All tool-call examples</b> (JSON args the agent composes for you)</summary>
@@ -252,9 +339,55 @@ Into a local JSONL index under `~/.dsh/office/mail/` — message metadata plus a
 If those fit your life, keep them. This toolkit exists for the people they skip: free-mailbox users outside the paid ecosystem, and anyone who wants the automation to be inspectable and local. Read the full positioning in [docs/STRATEGY.zh-CN.md](docs/STRATEGY.zh-CN.md).
 </details>
 
+## Troubleshooting
+
+| Symptom | Cause | Fix |
+|---|---|---|
+| DSH fails to boot with a schemastery / dsh-tools error | a second copy of the runtime got installed inside the plugin | delete `node_modules/@deepseek-ai` and `node_modules/@standard-schema` |
+| Sending fails with `535 Login Fail` | you used the login password | enable the SMTP service in your mailbox settings and generate an authorization code for `DSH_SMTP_PASS` |
+| IMAP will not connect or authenticate | the IMAP service is off, or the wrong secret | enable IMAP separately and put the authorization code in `DSH_IMAP_PASS` |
+| "Preview expired" | previews time out after 60 minutes | regenerate the preview, or raise `previewTtlMinutes` |
+| `escapes workDir` on an attachment | attachments must live inside the working directory | move the file into your workDir and reference it relatively |
+| Batch size rejected | `maxRecipients` is 50 and `maxDocRows` is 100 | split the batch, or raise the config |
+| A large sheet will not load | `maxSheetRows` caps reads at 20000 | `inspect` first, then `filter` before `aggregate` |
+| No tools appear at all | indentation or profile name in `cordis.patch.yml` | check the `- insert:` indentation and the `id` / `name` spelling, and that `<profile>` is right |
+
 ## Under the hood
 
 Built as a native Cordis plugin (`defineTool`, no MCP hop). SMTP via nodemailer, IMAP via ImapFlow + mailparser (all Postal Systems lineage, MIT). Documents via docx / pptxgenjs / exceljs. 100 end-to-end tests cover every tool plus the security guardrails (path-escape, CRLF injection, overwrite refusal, forward-only ledger). Full threat model and vulnerability history: [SECURITY.md](SECURITY.md).
+
+## For developers
+
+```text
+lib/index.js          registration, schema, and sending guardrails for all 14 tools
+lib/inbox.js          IMAP fetch, local index, deterministic triage
+lib/archive.js        archive search, .eml export, attachment harvest
+lib/stats.js          mail statistics and the job ledger
+lib/clean.js          subscription frequency table and unsubscribe advice
+lib/docgen.js         one .docx per data row
+lib/pptxgen.js        slide-block .pptx generation
+lib/sheet.js          inspect / filter / aggregate / split
+lib/docx-inject.js    placeholder injection with run-split-safe writes
+lib/render.js         variable rendering and validation
+tests/e2e.mjs         100 end-to-end assertions
+```
+
+Run the suite from the mounted plugin directory (Node >= 20):
+
+```bash
+cp tests/e2e.mjs ~/.dsh/profiles/web/node_modules/@local/dsh-plugin-office/
+cd ~/.dsh/profiles/web/node_modules/@local/dsh-plugin-office && node e2e.mjs
+```
+
+The suite points `DSH_OFFICE_HOME` at a temp directory, so your real mail data is untouched.
+
+Three schema rules bite when you add a tool, and they only surface on a real boot (`--dump-config`, or the web service returning 200); static checks will not catch them:
+
+1. object-typed `items` must set `additionalProperties: true`
+2. never put `additionalProperties: false` inside array `items`
+3. `additionalProperties` accepts a boolean only
+
+After changes, boot DSH once with `--dump-config` and confirm all 14 tools load with no errors in the log.
 
 ## Roadmap
 
@@ -262,6 +395,8 @@ The mail lifecycle is covered end to end (write / send / receive / archive / ana
 
 - Reply drafts & follow-up reminders
 - Scheduled morning triage via DSH automation tasks
+
+Release notes for each version: [Releases](https://github.com/Xplore-LAB/postbird/releases).
 
 ## Related
 
