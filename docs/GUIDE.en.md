@@ -133,7 +133,7 @@ The AI selects and combines these tools automatically. Their names document the 
 | `office_thread_summary` | Summarize participants, commitments, questions, decisions, and attachments | Local snippets by default, optional read-only full text, citations on every signal |
 | `office_action_extract` | Extract actions from a message, thread, or pasted notice | Deadline, priority, source, and responsibility signals |
 | `office_reply_draft` | Create one selected-tone grounded reply | Review-only output; preview and explicit confirmation still gate sending |
-| `office_collection_track` | Track complete, partial, and pending material submissions | Source evidence, preserved human corrections, CSV or XLSX export |
+| `office_collection_track` | Check a known roster or discover open-registration participants from a scoped mail subject | Missing items, repeat and unmatched submissions, source evidence, human corrections, CSV or XLSX export |
 | `office_attachment_ask` | Read PDF, Word, PowerPoint, Excel, and text attachments | Work-directory confinement and page, paragraph, slide, or row citations |
 | `office_archive_search` | Search by sender, subject, date, attachment, and category | Local index only |
 | `office_archive_export` | Export original `.eml` files and `index.csv` | Read-only retrieval and message cap |

@@ -185,7 +185,7 @@ AI 会自动选择并组合这些工具。表格用于说明能力边界，日�
 | `office_thread_summary` | 汇总线程中的参与者、承诺、问题、决策和附件 | 默认使用本地摘要，可选只读获取完整正文，每项带邮件引用 |
 | `office_action_extract` | 从邮件线程或粘贴文本中提取行动 | 返回截止时间、优先级、来源和责任线索 |
 | `office_reply_draft` | 生成一种指定语气的上下文回复 | 只生成待审草稿，仍需预览和明确确认才能发送 |
-| `office_collection_track` | 按名单跟踪材料齐全、缺件和未交状态 | 保存来源证据与人工校正，可导出 CSV 或 XLSX |
+| `office_collection_track` | 按已有名单核验材料，或按指定主题发现开放报名者 | 标记缺件、重复提交和名单外来件，保存来源证据与人工校正，可导出 CSV 或 XLSX |
 | `office_attachment_ask` | 阅读 PDF、Word、PPT、Excel 与文本附件 | 文件限制在工作目录，返回页、段落、幻灯片或表格行引用 |
 | `office_archive_search` | 按发件人、主题、日期、附件和分类检索 | 只读本地索引 |
 | `office_archive_export` | 导出原始 `.eml` 和 `index.csv` | 只读重新获取，限制数量 |

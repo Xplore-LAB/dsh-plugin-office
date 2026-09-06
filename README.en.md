@@ -7,12 +7,12 @@
 *Organize notices, track deadlines, collect materials, draft replies, and deliver real Word, Excel, PowerPoint, and email files from one request.*
 
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-Try%20Postbird-55e5d5?style=for-the-badge&logo=github&logoColor=071426)](https://xplore-lab.github.io/postbird/demo/)
-[![Campus Roles](https://img.shields.io/badge/Campus%20Roles-Six%20Experiences-50a6ff?style=for-the-badge)](#six-campus-roles)
+[![Campus Roles](https://img.shields.io/badge/Campus%20Roles-Seven%20Experiences-50a6ff?style=for-the-badge)](#seven-campus-roles)
 [![Quick Start](https://img.shields.io/badge/Quick%20Start-Five%20Minutes-9f86ff?style=for-the-badge)](#five-minute-start)
 
 [![GitHub stars](https://img.shields.io/github/stars/Xplore-LAB/postbird?style=flat&label=stars&color=gold)](https://github.com/Xplore-LAB/postbird/stargazers)
 [![release](https://img.shields.io/badge/release-v1.5.0-1683c4)](https://github.com/Xplore-LAB/postbird/releases)
-[![tests](https://img.shields.io/badge/checks-130%20passing-32b643)](tests/)
+[![tests](https://img.shields.io/badge/checks-135%20passing-32b643)](tests/)
 [![tools](https://img.shields.io/badge/tools-22-7e35d5)](#22-tools-working-together)
 [![license](https://img.shields.io/badge/license-MIT-1683c4)](LICENSE)
 [![local first](https://img.shields.io/badge/data-local--first-1683c4)](#safe-by-default)
@@ -44,7 +44,7 @@ Open the [Postbird Live Demo](https://xplore-lab.github.io/postbird/demo/), choo
 
 Every conclusion links back to its source. Outbound email always requires a preview and explicit confirmation.
 
-## Six Campus Roles
+## Seven Campus Roles
 
 | Role | Say this | Postbird delivers |
 | --- | --- | --- |
@@ -54,6 +54,13 @@ Every conclusion links back to its source. Outbound email always requires a prev
 | Administrator | “Organize training registrations and create a report.” | Deduplicated roster, attachment index, Word report, and presentation |
 | Instructor | “Summarize student email for this course.” | Assignment status, late requests, leave requests, replies, and archive |
 | Professor | “Keep only messages that need my decision.” | Research milestones, collaboration decisions, approvals, and delegated work |
+| Student organizer | “Organize activity registrations and materials, then show what needs attention.” | Registration tracker, duplicates, missing items, activity progress, and handover archive |
+
+### Student activities, from registration to handover
+
+Postbird can discover applicants from mail matching an activity subject, merge repeat submissions, check forms and supporting files, and continue through approvals, venue preparation, publicity, shifts, attendance, reimbursement, reporting, and annual handover.
+
+See the detailed [Student Work and Organization Scenario Map](docs/STUDENT-WORK-SCENARIOS.zh-CN.md) in Chinese.
 
 ```text
 Scan inbox
@@ -89,7 +96,7 @@ Wait for the user's decision
 | Experience | Benefit |
 | --- | --- |
 | Natural-language entry | No tool names or manual orchestration to memorize |
-| Six role-based demos | Visitors immediately see a workflow that resembles their own work |
+| Seven role-based demos | Visitors immediately see a workflow that resembles their own work |
 | Evidence on every result | Open the source message, PDF page, Word paragraph, slide, or sheet row |
 | End-to-end delivery | Continue from reading and deciding to reports, documents, and archives |
 | Configuration on demand | Demo and local documents work first; mailbox credentials come later |
@@ -170,7 +177,8 @@ Give every existing mailbox and local file collection a trustworthy, controllabl
 | [中文使用指南](docs/GUIDE.zh-CN.md) | Chinese setup, tool reference, and troubleshooting |
 | [English Guide](docs/GUIDE.en.md) | Setup, mailbox access, all 22 tools, and troubleshooting |
 | [Product Introduction](docs/PRODUCT-INTRO.zh-CN.md) | Product direction and capability boundaries in Chinese |
-| [Mail Scenarios](docs/MAIL-SCENARIOS.zh-CN.md) | Six campus roles and workflow examples in Chinese |
+| [Mail Scenarios](docs/MAIL-SCENARIOS.zh-CN.md) | Seven campus roles and workflow examples in Chinese |
+| [Student Work Scenarios](docs/STUDENT-WORK-SCENARIOS.zh-CN.md) | Recruitment, registrations, activity materials, approvals, attendance, reimbursement, annual review, and handover |
 | [Competitive Analysis](docs/COMPETITORS.zh-CN.md) | Market positioning and differentiation in Chinese |
 | [Promotion Strategy](docs/STRATEGY.zh-CN.md) | Public messaging and growth strategy in Chinese |
 

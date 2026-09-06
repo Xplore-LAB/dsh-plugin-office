@@ -20,7 +20,7 @@ for (const scene of ["daily", "radar", "reply", "triage", "mailmerge", "jobs", "
   assert.match(js, new RegExp(`\\b${scene}:\\s*\\{`), `missing scene ${scene}`);
 }
 
-for (const role of ["roleUndergrad", "roleGraduate", "roleCounselor", "roleAdmin", "roleTeacher", "roleProfessor"]) {
+for (const role of ["roleUndergrad", "roleGraduate", "roleCounselor", "roleAdmin", "roleTeacher", "roleProfessor", "roleStudentOrg"]) {
   assert.match(html, new RegExp(`data-scene=["']${role}["']`), `missing identity entry ${role}`);
   assert.match(js, new RegExp(`\\b${role}:\\s*\\{`), `missing identity workflow ${role}`);
 }
@@ -34,7 +34,7 @@ for (const tool of [
 }
 
 assert.match(html, /22 个 AI 办公工具协同/, "hero should carry the current tool count");
-assert.match(html, /130/, "hero should carry the current test count");
+assert.match(html, /135/, "hero should carry the current test count");
 assert.match(html, /把校园邮箱变成/, "hero should lead with the campus inbox-to-action promise");
 
 for (const asset of ["styles.css", "app.js", "../assets/brand/postbird-logo.png"]) {

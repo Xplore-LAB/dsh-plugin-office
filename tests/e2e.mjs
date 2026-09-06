@@ -552,6 +552,26 @@ await inboxLib.appendIndex([
     uid: 14, messageId: "bob-scholarship@x", from: { address: "bob@example.com", name: "Bob" },
     subject: "奖学金材料提交", snippet: "先提交申请表，另一项材料稍后补充。",
     attachments: [{ filename: "申请表.docx" }]
+  }),
+  msg({
+    uid: 15, messageId: "dave-scholarship@x", from: { address: "dave@example.com", name: "Dave" },
+    subject: "奖学金材料提交", snippet: "提交申请表和成绩单。",
+    attachments: [{ filename: "申请表.docx" }, { filename: "成绩单.pdf" }]
+  }),
+  msg({
+    uid: 16, messageId: "chenyu-club-1@x", from: { address: "chenyu@example.edu", name: "陈雨" },
+    subject: "天文社招新报名", snippet: "提交报名表和个人陈述。",
+    attachments: [{ filename: "报名表.docx" }, { filename: "个人陈述.pdf" }]
+  }),
+  msg({
+    uid: 17, messageId: "chenyu-club-2@x", from: { address: "chenyu@example.edu", name: "陈雨" },
+    subject: "天文社招新报名 补充材料", snippet: "补充可参加时间表。",
+    attachments: [{ filename: "时间表.xlsx" }]
+  }),
+  msg({
+    uid: 18, messageId: "liming-club@x", from: { address: "liming@example.edu", name: "李明" },
+    subject: "天文社招新报名", snippet: "先提交报名表。",
+    attachments: [{ filename: "报名表.docx" }]
   })
 ], inboxLib.defaultIndexPath());
 const collectionTrack = byName("office_collection_track");
@@ -566,6 +586,7 @@ const collectionScan = await collectionTrack.execute({
 }, exec);
 ok(collectionScan.counts.complete === 1 && collectionScan.counts.partial === 1 && collectionScan.counts.pending === 1, "collection scan separates complete, partial, and pending participants");
 ok(collectionScan.participants.find((person) => person.email === "alice@example.com").evidence[0].citation.startsWith("mail:"), "collection status links to source mail");
+ok(collectionScan.unmatchedSubmissions.some((person) => person.email === "dave@example.com"), "roster collection reports submissions from people outside the expected list");
 const collectionUpdate = await collectionTrack.execute({
   action: "update", collectionId: "scholarship-2026", participantEmail: "carol@example.com",
   status: "exempt", note: "本学期休学，经人工确认免交"
@@ -578,6 +599,21 @@ ok(collectionExport.rows === 3 && existsSync(collectionExport.file), "collection
 const collectionBook = new ExcelJS.Workbook();
 await collectionBook.xlsx.readFile(collectionExport.file);
 ok(collectionBook.worksheets[0].rowCount === 4, "collection workbook contains header and three participants");
+const openRegistration = await collectionTrack.execute({
+  action: "scan", collectionId: "astronomy-club-2026", title: "天文社招新报名",
+  participantMode: "discover", subjectKeyword: "天文社招新报名",
+  requiredItems: ["报名表|application", "个人陈述|statement"]
+}, exec);
+ok(openRegistration.participantMode === "discover" && openRegistration.totalParticipants === 2, "open registration discovers participants from matching mail without a roster");
+ok(openRegistration.counts.complete === 1 && openRegistration.counts.partial === 1, "open registration checks required materials for discovered participants");
+ok(openRegistration.resubmissions.length === 1 && openRegistration.resubmissions[0].email === "chenyu@example.edu", "open registration flags repeat submissions for review");
+let unscopedDiscoveryBlocked = false;
+try {
+  await collectionTrack.execute({
+    action: "scan", collectionId: "unscoped-open-registration", participantMode: "discover"
+  }, exec);
+} catch (error) { unscopedDiscoveryBlocked = /subjectKeyword is required/.test(error.message); }
+ok(unscopedDiscoveryBlocked, "open registration requires a subject scope before discovering inbox participants");
 
 // ── 27. attachment evidence across Office and PDF formats ──────────────
 const attachmentAsk = byName("office_attachment_ask");
@@ -635,7 +671,7 @@ const r25 = await statsTool.execute({ monthsBack: 6 }, exec);
 ok(r25.sentCount === 2 && r25.sendFailedCount === 1, `overview counts sent/failed (got ${r25.sentCount}/${r25.sendFailedCount})`);
 ok(r25.receivedCount >= 10, `overview counts received from the index (got ${r25.receivedCount})`);
 ok(r25.byMonth.length >= 1 && r25.byMonth[0].received > 0, "overview builds a monthly trend");
-ok(r25.topSenders.some((s) => s.from === "jwc@zju.edu.cn"), "overview lists top senders");
+ok(r25.topSenders.some((s) => s.from === "prof@zju.edu.cn"), "overview lists top senders");
 ok(r25.topRecipients.some((s) => s.to === "alice@qq.com"), "overview lists top recipients");
 ok(r25.subscriptionShare > 0 && r25.subscriptionShare <= 1, "overview computes subscription share");
 

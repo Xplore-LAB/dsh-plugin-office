@@ -75,6 +75,19 @@ const scenes = {
     reply: "今天需要你决策 5 件事：两篇论文修改、一项合作邀请、一份学生实验方案和一个基金节点。其余事项已整理为可委派清单。",
     render: () => renderCampus("professor")
   },
+  roleStudentOrg: {
+    prompt: "帮我整理校园文化节的报名和活动材料，告诉我现在最需要处理什么。",
+    intro: "我会按活动主题发现报名者，合并重复提交，核对必交材料，再把审批、场地、宣传、安全和预算节点整理成活动推进表。",
+    steps: [
+      ["office_collection_track", "从 126 封邮件发现报名者并合并重复提交"],
+      ["office_attachment_ask", "核对报名表、作品、签字页和安全材料"],
+      ["office_action_radar", "提取场地、宣传、安全和预算节点"],
+      ["office_reply_draft", "为缺件和待确认人员准备个性化提醒"],
+      ["office_sheet", "导出报名台账、推进表和归档索引"]
+    ],
+    reply: "96 名报名者已经核对。14 人材料不全，7 人有重复提交，6 人尚未确认到场，4 项审批仍需推进。活动台账和补件草稿已经准备。",
+    render: () => renderCampus("studentOrg")
+  },
   daily: {
     prompt: "帮我开始今天的工作，告诉我最需要处理什么。",
     intro: "我会读取本地索引，把邮件分类、截止时间和等待回复事项合并成一份今日行动简报。",
@@ -271,6 +284,7 @@ async function run() {
 }
 
 function detectScene(prompt) {
+  if (/社团|学生会|团学|招新|志愿者|校园文化节|活动材料/.test(prompt)) return "roleStudentOrg";
   if (/本周|这周/.test(prompt) && /必须|完成|通知/.test(prompt)) return "roleUndergrad";
   if (/导师|论文修改|审稿意见/.test(prompt)) return "roleGraduate";
   if (/奖学金|学生.*材料|缺材料/.test(prompt)) return "roleCounselor";
@@ -377,6 +391,21 @@ const campusResults = {
       ["基金材料节点", "周五 17:00", "缺预算说明，回复草稿已准备", ""]
     ],
     note: "普通通知和宣传邮件已归纳，可委派事项另存为课题组任务清单。"
+  },
+  studentOrg: {
+    label: "学生组织 · 校园文化节行动台",
+    title: "96 名报名者已核对",
+    score: "4项",
+    metrics: [["75", "材料齐全", "clean"], ["14", "材料不全", "todo"], ["7", "重复提交", "notice"]],
+    group: "现在最需要处理",
+    items: [
+      ["14 人缺报名表签字页或作品", "逐人缺失项已经列出", "依据：报名邮件、附件名和表内字段", "urgent"],
+      ["6 人尚未确认到场", "确认草稿等待预览", "活动时间：9 月 12 日 14:00", "urgent"],
+      ["场地与宣传审批待回复", "安全预案已收到，预算表缺负责人签字", "4 项审批按截止时间排序", ""],
+      ["活动成果包目录已建立", "报名、签到、票据、照片和总结分目录", "换届时可直接导出交接索引", ""]
+    ],
+    note: "报名筛选、审批结论、服务时长和报销判断仍由有权限的负责人确认。",
+    download: "studentOrg"
   }
 };
 
@@ -567,14 +596,16 @@ function download(type) {
     archive: "date,from,subject,attachments\n2026-08-18,project@example.com,项目确认,project-plan.pdf\n2026-08-21,client@example.com,Re: 交付时间,\n",
     eml: "From: project@example.com\nTo: team@example.com\nSubject: 项目确认\nDate: Tue, 18 Aug 2026 10:30:00 +0800\n\n这是 Postbird Live Demo 生成的虚构邮件样本。\n",
     scholarship: "姓名,邮箱,状态,已收材料,缺失材料,依据\n陈雨,chenyu@example.edu,partial,申请表;证明,成绩单,mail:student-042\n赵一,zhaoyi@example.edu,partial,申请表,签字页,申请表.pdf第3页\n李明,liming@example.edu,complete,申请表;成绩单;证明,,mail:student-018\n",
-    training: "姓名,部门,联系方式,报名项目,状态,缺失字段\n周敏,教务处,13800000001,教学管理培训,complete,\n陈宁,信息学院,,数据治理培训,partial,联系方式\n"
+    training: "姓名,部门,联系方式,报名项目,状态,缺失字段\n周敏,教务处,13800000001,教学管理培训,complete,\n陈宁,信息学院,,数据治理培训,partial,联系方式\n",
+    studentOrg: "姓名,邮箱,报名状态,已收材料,缺失材料,重复提交,待办,依据\n陈雨,chenyu@example.edu,partial,报名表;个人陈述,签字页,2,补交签字页,mail:club-017\n李明,liming@example.edu,complete,报名表;个人陈述;签字页,,1,确认到场,mail:club-031\n周青,zhouqing@example.edu,partial,报名表,作品;签字页,1,补交材料,mail:club-044\n"
   };
   const names = {
     jobs: "postbird-job-tracker.csv",
     archive: "postbird-archive-index.csv",
     eml: "postbird-demo-message.eml",
     scholarship: "postbird-scholarship-collection.csv",
-    training: "postbird-training-registration.csv"
+    training: "postbird-training-registration.csv",
+    studentOrg: "postbird-student-activity-tracker.csv"
   };
   const blob = new Blob([contents[type]], { type: "text/plain;charset=utf-8" });
   const url = URL.createObjectURL(blob);

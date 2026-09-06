@@ -7,12 +7,12 @@
 *一句话整理通知、追踪截止日期、汇总材料、起草回复，并交付真实的 Word、Excel、PPT 和邮件文件。*
 
 [![在线体验](https://img.shields.io/badge/在线体验-打开%20Live%20Demo-55e5d5?style=for-the-badge&logo=github&logoColor=071426)](https://xplore-lab.github.io/postbird/demo/)
-[![校园场景](https://img.shields.io/badge/校园场景-六类身份-50a6ff?style=for-the-badge)](#campus-scenes)
+[![校园场景](https://img.shields.io/badge/校园场景-七类身份-50a6ff?style=for-the-badge)](#campus-scenes)
 [![五分钟开始](https://img.shields.io/badge/五分钟开始-安装指南-9f86ff?style=for-the-badge)](#five-minute-start)
 
 [![GitHub stars](https://img.shields.io/github/stars/Xplore-LAB/postbird?style=flat&label=stars&color=gold)](https://github.com/Xplore-LAB/postbird/stargazers)
 [![release](https://img.shields.io/badge/release-v1.5.0-1683c4)](https://github.com/Xplore-LAB/postbird/releases)
-[![tests](https://img.shields.io/badge/checks-130%20passing-32b643)](tests/)
+[![tests](https://img.shields.io/badge/checks-135%20passing-32b643)](tests/)
 [![tools](https://img.shields.io/badge/tools-22-7e35d5)](#all-tools)
 [![license](https://img.shields.io/badge/license-MIT-1683c4)](LICENSE)
 [![local first](https://img.shields.io/badge/data-local--first-1683c4)](#安全可控)
@@ -46,7 +46,7 @@
 
 <a id="campus-scenes"></a>
 
-## 🎓 六类校园身份，一句话进入工作状态
+## 🎓 七类校园身份，一句话进入工作状态
 
 | 使用者 | 直接这样说 | Postbird 交付 |
 | --- | --- | --- |
@@ -56,6 +56,17 @@
 | 行政老师 | “整理培训报名邮件，生成名单、提醒和汇报” | 去重名单、附件索引、Word 汇报与 PPT 概览 |
 | 教学老师 | “汇总课程邮箱，告诉我需要处理什么” | 作业状态、补交与请假清单、分类回复和课程归档 |
 | 教授 | “只保留最近三天需要我决策的邮件” | 论文节点、合作判断、学生审批和可委派事项 |
+| 学生组织 | “整理活动报名和材料，告诉我现在最需要处理什么” | 报名台账、重复与缺件名单、活动推进表和归档目录 |
+
+### 学生工作，从收报名表走到活动交接
+
+Postbird 可以从指定主题的邮件直接发现报名者，合并重复提交，核对报名表、作品、签字页和活动材料，再继续处理审批、场地、宣传、排班、签到、报销、总结与换届归档。
+
+> **你只需说：** “帮我整理校园文化节的报名和活动材料，告诉我现在最需要处理什么。”
+>
+> **Postbird 会交付：** 有效报名与候补名单、逐人缺件、重复提交、待完成审批、个性化补件草稿、Excel 活动台账和可移交归档目录。
+
+查看 [学生工作与学生社团完整场景地图](docs/STUDENT-WORK-SCENARIOS.zh-CN.md)。
 
 ### 一个校园通知如何完成闭环
 
@@ -95,7 +106,7 @@ Postbird 将邮件理解、行动管理和 Office 交付放进同一个对话入
 | 体验设计 | 用户获得的价值 |
 | --- | --- |
 | 自然语言入口 | 无需记住工具名或手工拼装步骤 |
-| 六类身份模板 | 打开 Demo 即可看到贴近校园工作的结果 |
+| 七类身份模板 | 打开 Demo 即可看到贴近校园工作的结果 |
 | 每项结论带依据 | 可以定位原邮件、PDF 页、Word 段落、PPT 页或表格行 |
 | 完整工作流交付 | 从阅读、判断和回复继续走到统计、文档与归档 |
 | 配置按需出现 | 文档和浏览器 Demo 无需邮箱，连接真实邮箱时再填授权码 |
@@ -207,7 +218,8 @@ node scripts/postbird.mjs setup --help
 | [中文使用指南](docs/GUIDE.zh-CN.md) | 安装、邮箱接入、22 个工具与排障 |
 | [English Guide](docs/GUIDE.en.md) | Complete English setup, tool reference, and troubleshooting |
 | [产品介绍](docs/PRODUCT-INTRO.zh-CN.md) | 产品定位、校园价值与能力边界 |
-| [邮件场景](docs/MAIL-SCENARIOS.zh-CN.md) | 六类校园身份与典型工作流 |
+| [邮件场景](docs/MAIL-SCENARIOS.zh-CN.md) | 七类校园身份与典型工作流 |
+| [学生工作场景](docs/STUDENT-WORK-SCENARIOS.zh-CN.md) | 招新、报名、活动材料、审批、签到、报销、年审与换届交接 |
 | [竞品分析](docs/COMPETITORS.zh-CN.md) | 市场定位与差异化 |
 | [推广策略](docs/STRATEGY.zh-CN.md) | 对外传播与增长策略 |
 
