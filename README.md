@@ -1,52 +1,62 @@
-<div align="center">
-
-<img src="assets/brand/postbird-logo.png" alt="Postbird 信鸽：一只叼着密封信封的蓝色信鸽" width="144">
-
 # Postbird 信鸽
 
-**AI 替你跑邮件和文档这趟腿。跑腿而已，做主的还是你。**
+**把邮件和文档交给一句话，把数据和决定权留在自己手里。**
 
-<sub><b>Postbird for DeepSeek Harness</b> · 独立开源项目，与 Mailbird（Contenga International）、Postbird（Mailstreet，比利时）无任何隶属、背书或合作关系</sub>
+[![Release](https://img.shields.io/github/v/release/Xplore-LAB/postbird)](https://github.com/Xplore-LAB/postbird/releases)
+[![Tests](https://img.shields.io/badge/tests-100%20passing-brightgreen)](#底层实现)
+[![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+[![Platform](https://img.shields.io/badge/platform-DeepSeek%20Harness-8a2be2)](https://github.com/deepseek-ai/deepseek-harness)
+[![Tools](https://img.shields.io/badge/tools-14-blueviolet)](#十四个工具)
+[![Node](https://img.shields.io/badge/node-%3E%3D%2020-brightgreen)](https://nodejs.org)
 
-<p align="center">
-  <a href="https://github.com/Xplore-LAB/postbird/releases"><img src="https://img.shields.io/github/v/release/Xplore-LAB/postbird" alt="Release" style="display:inline-block;vertical-align:middle"></a>
-  <a href="#底层实现"><img src="https://img.shields.io/badge/tests-100%20passing-brightgreen" alt="Tests" style="display:inline-block;vertical-align:middle"></a>
-  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="License" style="display:inline-block;vertical-align:middle"></a>
-  <a href="https://github.com/deepseek-ai/deepseek-harness"><img src="https://img.shields.io/badge/platform-DeepSeek%20Harness-8a2be2" alt="Platform" style="display:inline-block;vertical-align:middle"></a>
-  <a href="#十四个工具"><img src="https://img.shields.io/badge/tools-14-blueviolet" alt="Tools" style="display:inline-block;vertical-align:middle"></a>
-  <a href="https://nodejs.org"><img src="https://img.shields.io/badge/node-%3E%3D%2020-brightgreen" alt="Node" style="display:inline-block;vertical-align:middle"></a>
-</p>
-
-简体中文 · [English](README.en.md) · [产品介绍](docs/PRODUCT-INTRO.zh-CN.md) · [竞品对比](docs/COMPETITORS.zh-CN.md) · [命名规范](docs/BRAND.zh-CN.md)
-
-</div>
+简体中文 | [English](README.en.md)
 
 ---
 
-信鸽只负责把信送到，不替你拆信、不替你回信、更不会替你把信扔了。这是 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) 的办公插件（包名 `dsh-plugin-office`），十四个工具：群发邮件、整理收件箱、归档交接、求职台账、Word / PPT / 表格。QQ、163、Gmail 都能用，不挑邮箱、不收订阅费、不上传数据。
+## ⚡ 概览
 
-<p align="center">
-  <img src="assets/brand/postbird-readme-banner.png" alt="从一句话到信鸽处理，再到邮件和文档留在本地电脑的 Postbird 工作流程" width="100%">
-</p>
+**Postbird 是 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) 的本地优先 AI 办公插件。** 它把邮件分诊、安全群发、资料归档、求职台账和 Word / PPT / 表格生成接入同一个对话入口。你说清目标，它调用十四个工具完成任务，并把过程和结果交给你检查。
+
+> **你只需要：** 用自然语言描述任务，按需提供邮箱授权码或本地文件。
+>
+> **Postbird 会交付：** 可复核的处理结果，以及 `.eml`、`.csv`、`.xlsx`、`.docx`、`.pptx` 等真实文件。
+
+QQ、163、126、Gmail、Outlook 都能接入。收件默认只读，发件必须先预览再确认，邮件索引和生成文件留在你的电脑上。
+
+### 我们的愿景
+
+Postbird 致力于让每个人现有的邮箱和本地文件，直接获得一层可信、可控、可交付的 AI 办公能力。
+
+1. **对个人：** 用一句话整理收件箱、跟踪求职进度、生成文档，把时间留给判断和创造。
+2. **对团队：** 把群发、归档、交接和批量制表变成可复核的流程，让经验沉淀成可以重复执行的工作方式。
+
+从一封邮件到一批文档，让重复劳动自动流转，让每次关键决定都回到你手里。
+
+![从一句话到信鸽处理，再到邮件和文档留在本地电脑的 Postbird 工作流程](assets/brand/postbird-readme-banner.png)
+
+## 🔄 从一句话到可交付结果
+
+1. **说出目标。** 例如“找出最近三天需要回复的邮件”或“按名单生成工资通知”。
+2. **读取上下文。** Postbird 检查本地文件，或通过只读 IMAP 获取你授权的邮件。
+3. **执行并设防。** 分类和统计直接运行；发信先生成预览，得到你确认后才会投递。
+4. **交付结果。** 摘要在对话中展示，文档、表格、邮件和台账写入本地工作目录。
+
+### 看一眼实际效果
 
 ```text
 你 ：拉一下最近三天的收件，哪些真需要我处理？
-AI ：只读拉取 61 封（没标记已读）。要办的 3 封：
-     · 腾讯 HR（今天 10:42）  面试邀请，9 月 6 日前回复确认
-     · 教务处（昨天 16:20）   选课窗口明天 9:00 开启
-     · 招商银行（今天 09:15） 网银登录验证码
-     其余：通知 12 · 订阅 41 · 私信 5。有 2 封拿不准，要复核吗？
+AI ：只读拉取 61 封。要办的 3 封：面试邀请、选课通知、网银提醒。
+     其余邮件已分为通知、订阅和私信；有 2 封拿不准，等你复核。
 
 你 ：顺便看看我投的公司到哪一步了。
-AI ：台账 11 家：面试中 3（腾讯 9/6 二面、字节、阿里）、
-     笔试 4、已投未回 4（其中 2 家超 14 天）。
-     拼多多 HR 用的个人 QQ 邮箱，认不出公司，要归到拼多多吗？
+AI ：台账共 11 家：面试中 3 家、笔试 4 家、已投未回 4 家。
+     有一封来自个人邮箱的招聘邮件，需要你确认公司归属。
 
-你 ：归过去，导出一份表。
-AI ：已更新并写入 track.csv（12 行）。
+你 ：归到拼多多，导出一份表。
+AI ：已更新台账，并写入 track.csv。
 ```
 
-## 三步装上
+## 🚀 三步装上
 
 ```bash
 # 1. 克隆仓库，放进 DSH profile 的 @local 目录
@@ -164,9 +174,7 @@ office_docgen: 6 files → letters/notice_Alice.docx … letters/notice_Frank.do
 
 送信的鸟不该替主人做主，这套工具的护栏就是照这条画的。
 
-<p align="center">
-  <img src="assets/brand/postbird-safety-boundary.svg" alt="Postbird 的四条安全边界：发信前确认、收件只读、不提供删除、数据留在本地" width="900">
-</p>
+![Postbird 的四条安全边界：发信前确认、收件只读、不提供删除、数据留在本地](assets/brand/postbird-safety-boundary.svg)
 
 - **发信必须过两道门。** 没有预览 + `confirm:true`，一封都发不出去。收件人上限、逐封节流、域名白名单、只追加台账。
 - **收信严格只读。** 正文用 PEEK 拉取（绝不标已读），不改旗标、不删信，本地只存元数据加 300 字摘要。
@@ -190,8 +198,7 @@ office_docgen: 6 files → letters/notice_Alice.docx … letters/notice_Frank.do
 
 只有 `index.jsonl` 含摘要，邮件全文和附件在你明确导出时才落盘到工作目录。想清空收件索引：`rm -rf ~/.dsh/office/mail`。卸插件：删掉 `node_modules/@local/dsh-plugin-office` 目录，并从 `cordis.patch.yml` 里移除 `tool-office` 那一段。
 
-<details id="完整配置项">
-<summary><b>完整配置项</b></summary>
+### 完整配置项
 
 下面列出全部默认值，只写你要改的那几行即可。
 
@@ -230,10 +237,9 @@ config:
 
 调试时可设 `DSH_OFFICE_HOME=/tmp/office-test`，数据目录会整体改道，不碰真实数据。
 
-</details>
+## 工具调用示例
 
-<details>
-<summary><b>工具调用示例</b>（AI 会替你组装，人不用写）</summary>
+AI 会替你组装以下参数，人不用手写。
 
 **CSV 批量生成信函**（数据列自动成为 `{{字段}}` 变量）：
 
@@ -290,10 +296,7 @@ config:
 { "action": "export", "outputPath": "track.csv", "workDir": "/path/to/work" }
 ```
 
-</details>
-
-<details>
-<summary><b>常见问题</b></summary>
+## 常见问题
 
 **要花钱吗？** 插件 MIT 协议免费，只花你本来就在花的 DSH 模型用量。没有订阅、没有云端付费档、没有遥测。
 
@@ -307,12 +310,7 @@ config:
 
 **为什么叫信鸽？** 信鸽只管把信送到，不拆、不回、不扔。这套工具的边界跟这只鸟一样：跑腿全包，做主权归你。
 
-**跟 Mailbird 是一家吗？** 毫无关系。Mailbird 是 Contenga International 的商业桌面邮件客户端，Postbird 是跑在 DeepSeek Harness 里的开源插件。名字撞车纯属 bird 词根太好用，因此我们对外一律写作 Postbird for DeepSeek Harness，并在首屏标注免责声明。完整排查见 [BRAND.zh-CN.md](docs/BRAND.zh-CN.md)。
-
-</details>
-
-<details>
-<summary><b>排障</b></summary>
+## 排障
 
 | 现象 | 原因 | 怎么办 |
 |---|---|---|
@@ -324,8 +322,6 @@ config:
 | 提示单批超限 | `maxRecipients` 50、`maxDocRows` 100 | 分批跑，或改配置 |
 | 大表读不动 | `maxSheetRows` 上限 20000 | 先 `inspect` 摸清列，再 `filter` 缩小范围后 `aggregate` |
 | 工具根本没出现 | `cordis.patch.yml` 缩进或 profile 路径错 | 核对 `- insert:` 的缩进与 `id` / `name` 拼写，profile 名是否填对 |
-
-</details>
 
 ## 底层实现
 
@@ -374,8 +370,8 @@ cd ~/.dsh/profiles/web/node_modules/@local/dsh-plugin-office && node e2e.mjs
 
 [word-mail-merge-batch-sender](https://github.com/Xplore-LAB/word-mail-merge-batch-sender)（邮件合并的 VBA/Outlook 初版，Postbird 是它的继任者） · [dsh-plugin-asmemory](https://github.com/Xplore-LAB/dsh-plugin-asmemory)（DSH 持久记忆插件）
 
-延伸阅读：[产品介绍](docs/PRODUCT-INTRO.zh-CN.md)（对话实录版） · [竞品对比](docs/COMPETITORS.zh-CN.md) · [发展策略](docs/STRATEGY.zh-CN.md) · [场景全景地图](docs/MAIL-SCENARIOS.zh-CN.md) · [命名规范](docs/BRAND.zh-CN.md)
+延伸阅读：[产品介绍](docs/PRODUCT-INTRO.zh-CN.md)（对话实录版） · [竞品对比](docs/COMPETITORS.zh-CN.md) · [发展策略](docs/STRATEGY.zh-CN.md) · [场景全景地图](docs/MAIL-SCENARIOS.zh-CN.md)
 
 ## 许可证
 
-代码 MIT。Postbird 这一名称未主张商标权益，若你打算拿去做商业发行，请先自行完成商标检索，背景见 [BRAND.zh-CN.md](docs/BRAND.zh-CN.md)。
+本项目基于 [MIT 许可证](LICENSE) 开源。

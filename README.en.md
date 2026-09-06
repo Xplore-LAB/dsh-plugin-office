@@ -1,33 +1,45 @@
-<div align="center">
-
-<img src="assets/brand/postbird-logo.png" alt="Postbird: a blue carrier pigeon holding a sealed envelope" width="144">
-
 # Postbird
 
-**A carrier pigeon for your email and documents. It runs the errand; you stay in charge.**
+**Give email and documents to one conversation. Keep your data and decisions in your hands.**
 
-<sub><b>Postbird for DeepSeek Harness</b> — an independent open-source project, not affiliated with, endorsed by, or connected to Mailbird (Contenga International) or Postbird (Mailstreet, Belgium).</sub>
+[![Release](https://img.shields.io/github/v/release/Xplore-LAB/postbird)](https://github.com/Xplore-LAB/postbird/releases)
+[![Tests](https://img.shields.io/badge/tests-100%20passing-brightgreen)](#under-the-hood)
+[![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+[![Platform](https://img.shields.io/badge/platform-DeepSeek%20Harness-8a2be2)](https://github.com/deepseek-ai/deepseek-harness)
+[![Tools](https://img.shields.io/badge/tools-14-blueviolet)](#the-14-tools)
+[![Node](https://img.shields.io/badge/node-%3E%3D%2020-brightgreen)](https://nodejs.org)
 
-<p align="center">
-  <a href="https://github.com/Xplore-LAB/postbird/releases"><img src="https://img.shields.io/github/v/release/Xplore-LAB/postbird" alt="Release" style="display:inline-block;vertical-align:middle"></a>
-  <a href="#under-the-hood"><img src="https://img.shields.io/badge/tests-100%20passing-brightgreen" alt="Tests" style="display:inline-block;vertical-align:middle"></a>
-  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="License" style="display:inline-block;vertical-align:middle"></a>
-  <a href="https://github.com/deepseek-ai/deepseek-harness"><img src="https://img.shields.io/badge/platform-DeepSeek%20Harness-8a2be2" alt="Platform" style="display:inline-block;vertical-align:middle"></a>
-  <a href="#the-14-tools"><img src="https://img.shields.io/badge/tools-14-blueviolet" alt="Tools" style="display:inline-block;vertical-align:middle"></a>
-  <a href="https://nodejs.org"><img src="https://img.shields.io/badge/node-%3E%3D%2020-brightgreen" alt="Node" style="display:inline-block;vertical-align:middle"></a>
-</p>
-
-[简体中文](README.md) · English · [产品介绍（通俗版）](docs/PRODUCT-INTRO.zh-CN.md) · [Naming & trademarks](docs/BRAND.zh-CN.md)
-
-</div>
+[简体中文](README.md) | English
 
 ---
 
-A carrier pigeon delivers the letter. It does not open it, answer it, or throw it away. **Postbird for DeepSeek Harness** (package name `dsh-plugin-office`) is a native plugin for [DeepSeek Harness (DSH)](https://github.com/deepseek-ai/deepseek-harness) that turns your terminal agent into an office assistant: mail merge, inbox triage, archiving, mail statistics, a job-application ledger, a subscription cleanup advisor, plus Word / PowerPoint / spreadsheet generation. Fourteen tools, one chat window.
+## ⚡ Overview
 
-<p align="center">
-  <img src="assets/brand/postbird-readme-banner.png" alt="From a plain-language request to Postbird handling email and documents locally" width="100%">
-</p>
+**Postbird is a local-first AI office plugin for [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness).** It brings inbox triage, safe mail merge, archive handovers, job-application tracking, and Word / PowerPoint / spreadsheet generation into one conversation. You describe the outcome, Postbird coordinates fourteen focused tools, and you inspect the work.
+
+> **You provide:** a plain-language request, plus mailbox credentials or local files when the task needs them.
+>
+> **Postbird delivers:** reviewable results and real `.eml`, `.csv`, `.xlsx`, `.docx`, and `.pptx` files.
+
+Connect QQ, 163, 126, Gmail, or Outlook. Inbox access is read-only by default, every delivery requires a preview and explicit confirmation, and indexes and generated files stay on your machine.
+
+### Our vision
+
+Postbird gives the mailboxes and local files people already use a trustworthy, controllable, and deliverable AI office layer.
+
+1. **For individuals:** organize an inbox, track job applications, and generate documents with one request, leaving more time for judgment and creative work.
+2. **For teams:** turn mail merge, archiving, handovers, and spreadsheet processing into reviewable workflows that can be repeated and shared.
+
+From one message to a full batch of documents, Postbird keeps routine work moving while every critical decision stays in your hands.
+
+![From a plain-language request to Postbird handling email and documents locally](assets/brand/postbird-readme-banner.png)
+
+## 🔄 From request to deliverable
+
+1. **Describe the outcome.** Ask for the messages that need a reply, a personalized mail merge, or a document generated from a spreadsheet.
+2. **Read the context.** Postbird inspects local files or fetches authorized mail through read-only IMAP.
+3. **Run with guardrails.** Analysis runs directly; outgoing mail always pauses for preview and approval.
+4. **Deliver the work.** Summaries appear in the conversation while documents, mail, spreadsheets, and ledgers are written to the local workspace.
 
 ## What can it do?
 
@@ -37,13 +49,13 @@ You describe the task in plain language; the agent picks the right tool and show
 
 > "Here's `recipients.csv`. Send each person the payroll notice with their own attachment. Show me a preview first."
 
-Every row is rendered and validated, you approve what you see, then delivery runs over paced SMTP with a full audit log. QQ / 163 / 126 / Gmail / Outlook accounts all work — the accounts free-mail users already have. The Outlook Word-Excel mail-merge dance is not required.
+Every row is rendered and validated, you approve what you see, then delivery runs over paced SMTP with a full audit log. QQ / 163 / 126 / Gmail / Outlook accounts all work, including the accounts free-mail users already have. The Outlook Word-Excel mail-merge dance is optional.
 
 ### An inbox that triages itself
 
 > "What actually needs my attention from the last three days?"
 
-A read-only IMAP pull (nothing is ever marked as read), then a deterministic sort into **todo / notice / subscription / personal**. Every verdict carries its evidence — "subject contains interview, deadline Sep 6" — so misfiles are visible and correctable, and low-confidence items are flagged for a second look instead of guessed at.
+A read-only IMAP pull (nothing is ever marked as read), then a deterministic sort into **todo / notice / subscription / personal**. Every verdict carries its evidence, such as "subject contains interview, deadline Sep 6," so misfiles are visible and correctable, and low-confidence items are flagged for a second look instead of guessed at.
 
 ### Package a whole term of mail for the next committee
 
@@ -61,7 +73,7 @@ The ledger auto-detects signals in your mail and merges them **forward-only**: a
 
 > "Which subscriptions should I kill?"
 
-A per-sender frequency ranking with each sender's unsubscribe link when they provided one. Advice only — it never unsubscribes, deletes, or moves anything for you.
+A per-sender frequency ranking with each sender's unsubscribe link when they provided one. It provides advice only and never unsubscribes, deletes, or moves anything for you.
 
 ### Plus the document side
 
@@ -77,7 +89,7 @@ Agent  : Fetched 20 messages. 3 need action:
          · 17 others classified notice/subscription/personal, no deadlines.
 
 You    : where do my job applications stand?
-Agent  : Scanned the index — ledger now has 11 companies:
+Agent  : Scanned the index. The ledger now has 11 companies:
          3 interviews (Tencent, ByteDance, Alibaba), 6 written-tests,
          2 no reply for 14+ days. Exported track.csv.
 
@@ -123,9 +135,9 @@ Students and educators, club and org leaders, job seekers in application season,
 | Cost | free | monthly subscription | free (MIT), you only pay your model usage |
 | Mailboxes | the vendor's own | tied to the vendor's ecosystem | QQ / 163 / 126 / Gmail / Outlook, one setup each |
 | Your data | provider's servers | vendor cloud | your machine, nothing uploaded |
-| Hackable | no | limited | fully — it's open source |
+| Hackable | no | limited | fully open source |
 
-No claim of "safer than the big vendors" — the honest statement is that the threat surface is different and every part of it is under your control: [SECURITY.md](SECURITY.md).
+The threat surface is different from the big vendors, and every part of it is under your control. See [SECURITY.md](SECURITY.md).
 
 ## Safety model
 
@@ -203,8 +215,9 @@ office_docgen: 6 files → letters/notice_Alice.docx … letters/notice_Frank.do
 
 Once files land on disk the plugin is mounted correctly, and configuring SMTP / IMAP becomes worth your time.
 
-<details>
-<summary><b>Full configuration</b> (all defaults; override only what you need)</summary>
+### Full configuration
+
+All defaults are listed below. Override only what you need.
 
 ```yaml
 config:
@@ -241,10 +254,9 @@ config:
 
 Set `DSH_OFFICE_HOME=/tmp/office-test` to relocate the entire data directory while debugging.
 
-</details>
+## Tool-call examples
 
-<details>
-<summary><b>All tool-call examples</b> (JSON args the agent composes for you)</summary>
+These are the JSON arguments the agent composes for you.
 
 **Batch letters from a CSV** (data columns become `{{field}}` variables):
 
@@ -261,7 +273,7 @@ Set `DSH_OFFICE_HOME=/tmp/office-test` to relocate the entire data directory whi
 }
 ```
 
-**Spreadsheet pipeline** — inspect first, then act:
+**Spreadsheet pipeline:** inspect first, then act.
 
 ```json
 { "file": "employees.csv", "action": "inspect" }
@@ -275,7 +287,7 @@ Set `DSH_OFFICE_HOME=/tmp/office-test` to relocate the entire data directory whi
   "splitBy": "department", "outputPrefix": "out/dept" }
 ```
 
-**Mail merge** — preview, show the human, then send:
+**Mail merge:** preview, show the human, then send.
 
 ```json
 { "subjectTemplate": "{{month}} payroll notice for {{name}}",
@@ -284,14 +296,14 @@ Set `DSH_OFFICE_HOME=/tmp/office-test` to relocate the entire data directory whi
 { "previewId": "pm_…", "mode": "send", "confirm": true }
 ```
 
-**Inbox triage** — fetch read-only, then bucket:
+**Inbox triage:** fetch read-only, then bucket.
 
 ```json
 { "limit": 20, "daysBack": 1 }
 { "sinceHours": 24 }
 ```
 
-**Archive & attachments** — search locally, then harvest:
+**Archive and attachments:** search locally, then harvest.
 
 ```json
 { "from": "zju.edu.cn", "category": "todo", "hasAttachment": true }
@@ -299,7 +311,7 @@ Set `DSH_OFFICE_HOME=/tmp/office-test` to relocate the entire data directory whi
 { "extensions": ["pdf"], "outputDir": "resumes", "workDir": "/path/to/work" }
 ```
 
-**Job ledger** — auto-scan, correct, export:
+**Job ledger:** auto-scan, correct, export.
 
 ```json
 { "action": "scan" }
@@ -307,40 +319,23 @@ Set `DSH_OFFICE_HOME=/tmp/office-test` to relocate the entire data directory whi
 { "action": "export", "outputPath": "track.csv", "workDir": "/path/to/work" }
 ```
 
-</details>
-
 ## FAQ
 
-<details>
-<summary><b>Does it cost anything?</b></summary>
+### Does it cost anything?
 
 The plugin is MIT-licensed and free. You only pay for whatever DSH model usage you already have. No subscription, no cloud tier, no telemetry.
-</details>
+### Does it work with QQ / 163 / 126 mail?
 
-<details>
-<summary><b>Does it work with QQ / 163 / 126 mail?</b></summary>
-
-Yes. These providers expose full SMTP and IMAP to free accounts — you just need an authorization code (generated in the mailbox settings, distinct from your login password). Host presets are auto-derived from your address.
-</details>
-
-<details>
-<summary><b>Can it send or delete something without my approval?</b></summary>
+Yes. These providers expose full SMTP and IMAP to free accounts. You only need an authorization code generated in the mailbox settings, which is distinct from your login password. Host presets are auto-derived from your address.
+### Can it send or delete something without my approval?
 
 No. Sending requires an explicit preview → approval → `confirm:true` sequence. The IMAP side is read-only by construction. The cleanup advisor produces a report and nothing else. These are design constraints, not configuration defaults.
-</details>
+### Where does my mail content go?
 
-<details>
-<summary><b>Where does my mail content go?</b></summary>
-
-Into a local JSONL index under `~/.dsh/office/mail/` — message metadata plus a 300-character snippet. Full text and attachments hit disk only when you explicitly export or harvest them. Nothing is uploaded anywhere.
-</details>
-
-<details>
-<summary><b>Why not just use Office / Copilot / my webmail?</b></summary>
+Into a local JSONL index under `~/.dsh/office/mail/`, containing message metadata plus a 300-character snippet. Full text and attachments hit disk only when you explicitly export or harvest them. Nothing is uploaded anywhere.
+### Why use Postbird alongside Office, Copilot, or webmail?
 
 If those fit your life, keep them. This toolkit exists for the people they skip: free-mailbox users outside the paid ecosystem, and anyone who wants the automation to be inspectable and local. Read the full positioning in [docs/STRATEGY.zh-CN.md](docs/STRATEGY.zh-CN.md).
-</details>
-
 ## Troubleshooting
 
 | Symptom | Cause | Fix |
@@ -402,11 +397,11 @@ Release notes for each version: [Releases](https://github.com/Xplore-LAB/postbir
 
 ## Related
 
-- [word-mail-merge-batch-sender](https://github.com/Xplore-LAB/word-mail-merge-batch-sender) — the original VBA/Outlook edition of the mail merge; this plugin is its DSH successor
-- [dsh-plugin-asmemory](https://github.com/Xplore-LAB/dsh-plugin-asmemory) — persistent memory plugin for DSH
+- [word-mail-merge-batch-sender](https://github.com/Xplore-LAB/word-mail-merge-batch-sender): the original VBA/Outlook edition of the mail merge; this plugin is its DSH successor
+- [dsh-plugin-asmemory](https://github.com/Xplore-LAB/dsh-plugin-asmemory): persistent memory plugin for DSH
 
-Further reading: [STRATEGY](docs/STRATEGY.zh-CN.md) (why mail is still an open field and where the big vendors' moats crack) · [scenario map](docs/MAIL-SCENARIOS.zh-CN.md) (all six lifecycle segments) · [product intro in plain Chinese](docs/PRODUCT-INTRO.zh-CN.md) · [naming & trademark notes](docs/BRAND.zh-CN.md).
+Further reading: [STRATEGY](docs/STRATEGY.zh-CN.md) (why mail is still an open field and where the big vendors' moats crack) · [scenario map](docs/MAIL-SCENARIOS.zh-CN.md) (all six lifecycle segments) · [product intro in plain Chinese](docs/PRODUCT-INTRO.zh-CN.md).
 
 ## License
 
-Code is MIT. No trademark claim is made over the name Postbird; run your own clearance search before shipping it commercially.
+This project is open source under the [MIT License](LICENSE).
