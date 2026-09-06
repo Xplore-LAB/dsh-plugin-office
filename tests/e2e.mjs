@@ -1,14 +1,18 @@
-// End-to-end tests for @local/dsh-plugin-office (all four tools).
-// Run from inside the mounted plugin directory:
-//   cp tests/e2e.mjs <profile>/node_modules/@local/dsh-plugin-office/ && node e2e.mjs
+// End-to-end tests for every @local/dsh-plugin-office tool.
 import fsp from "node:fs/promises";
-import path from "node:path";
+import { existsSync } from "node:fs";
 import os from "node:os";
-import { pathToFileURL } from "node:url";
+import path from "node:path";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import { createRequire } from "node:module";
 import { execFileSync } from "node:child_process";
 
-const MOUNT = path.join(os.homedir(), ".dsh/profiles/web/node_modules/@local/dsh-plugin-office");
+const SOURCE = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const MOUNT = process.env.POSTBIRD_TEST_MOUNT
+  ? path.resolve(process.env.POSTBIRD_TEST_MOUNT)
+  : existsSync(path.join(SOURCE, "node_modules"))
+    ? SOURCE
+    : path.join(os.homedir(), ".dsh/profiles/web/node_modules/@local/dsh-plugin-office");
 const PLUGIN = path.join(MOUNT, "lib/index.js");
 const requireFromPlugin = createRequire(pathToFileURL(path.join(MOUNT, "package.json")).href);
 const ExcelJS = requireFromPlugin("exceljs");
@@ -32,6 +36,7 @@ const ok = (cond, msg) => { if (!cond) throw new Error(`FAIL: ${msg}`); console.
 const base = path.join(os.tmpdir(), "officetest");
 await fsp.rm(base, { recursive: true, force: true });
 await fsp.mkdir(base, { recursive: true });
+process.env.DSH_OFFICE_HOME = path.join(base, "postbird-home");
 
 // fixtures
 await fsp.writeFile(path.join(base, "recipients.csv"),
@@ -275,7 +280,7 @@ const r15 = await mailPreview.execute({
 }, exec);
 ok(r15.valid === 1, "injection row is sanitized, not dropped");
 const rec15 = JSON.parse(await fsp.readFile(
-  path.join(os.homedir(), ".dsh/office/mail/previews", `${r15.previewId}.json`), "utf8"));
+  path.join(process.env.DSH_OFFICE_HOME, "mail", "previews", `${r15.previewId}.json`), "utf8"));
 ok(!/[\r\n]/.test(rec15.rows[0].subject), "subject has no CR/LF after sanitize");
 ok(!/[\r\n]/.test(rec15.rows[0].to), "To header (display name) has no CR/LF after sanitize");
 
@@ -299,7 +304,7 @@ const r16b = await preview2.execute({
 ok(r16b.invalid === 1 && r16b.problems.some((p) => /allowDomains/.test(p)), "domain allowlist blocks foreign domain");
 
 // ── 17. security: rolling-24h send cap ──────────────────────────────────
-const mailDir = path.join(os.homedir(), ".dsh/office/mail");
+const mailDir = path.join(process.env.DSH_OFFICE_HOME, "mail");
 await fsp.mkdir(mailDir, { recursive: true });
 const now = new Date().toISOString();
 await fsp.writeFile(path.join(mailDir, "sent-log.jsonl"),
@@ -332,6 +337,16 @@ try {
   }, exec);
 } catch (e) { imgErr = /escapes workDir/.test(e.message); }
 ok(imgErr, "pptx imagePath escape blocked");
+
+let unsafeImageErr = false;
+try {
+  await pptxTool.execute({
+    content: [{ type: "image", imagePath: "crafted.icns" }],
+    outputPath: "decks/unsafe-image.pptx",
+    workDir: base
+  }, exec);
+} catch (e) { unsafeImageErr = /unsupported image type/.test(e.message); }
+ok(unsafeImageErr, "pptx rejects unsupported image parsers before reading the file");
 
 // ── 19. inbox: IMAP presets and config errors ───────────────────────────
 const inboxLib = await import(pathToFileURL(path.join(MOUNT, "lib/inbox.js")).href);
@@ -529,6 +544,3 @@ delete process.env.DSH_OFFICE_HOME;
 delete process.env.DSH_IMAP_PASS;
 
 console.log(`\nAll ${passed} checks passed.`);
-await fsp.rm(path.join(os.homedir(), ".dsh/office/mail/previews"), { recursive: true, force: true }).catch(() => {});
-await fsp.rm(path.join(os.homedir(), ".dsh/office/mail/drafts"), { recursive: true, force: true }).catch(() => {});
-await fsp.rm(path.join(os.homedir(), ".dsh/office/mail/sent-log.jsonl"), { force: true }).catch(() => {});
