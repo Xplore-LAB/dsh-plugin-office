@@ -1,8 +1,6 @@
 <div align="center">
 
-<img src="assets/brand/postbird-readme-hero-v2.png" alt="Postbird 信鸽在邮件、文档和表格之间传递信息" width="1000">
-
-# Postbird 信鸽
+<img src="assets/brand/postbird-readme-hero-v3.png" alt="Postbird 信鸽品牌标志，在邮件、文档和表格之间传递信息" width="1000">
 
 **把邮件和文档交给一句话，把数据和决定权留在自己手里。**
 

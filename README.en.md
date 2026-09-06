@@ -1,8 +1,6 @@
 <div align="center">
 
-<img src="assets/brand/postbird-readme-hero-v2.png" alt="Postbird carrying information across email, documents, and spreadsheets" width="1000">
-
-# Postbird
+<img src="assets/brand/postbird-readme-hero-v3.png" alt="Postbird brand mark carrying information across email, documents, and spreadsheets" width="1000">
 
 **Give email and documents to one conversation. Keep your data and decisions in your hands.**
 
