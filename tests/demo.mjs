@@ -16,9 +16,16 @@ for (const id of ["chatStream", "promptInput", "resultContent", "runButton", "st
 const ids = [...html.matchAll(/\sid=["']([^"']+)["']/g)].map(match => match[1]);
 assert.equal(new Set(ids).size, ids.length, "HTML ids must be unique");
 
-for (const scene of ["triage", "mailmerge", "jobs", "analytics", "documents", "archive"]) {
+for (const scene of ["daily", "radar", "reply", "triage", "mailmerge", "jobs", "analytics", "documents", "archive"]) {
   assert.match(js, new RegExp(`\\b${scene}:\\s*\\{`), `missing scene ${scene}`);
 }
+
+for (const tool of ["office_daily_brief", "office_action_radar", "office_context_reply"]) {
+  assert.match(js, new RegExp(tool), `missing flagship workflow ${tool}`);
+}
+
+assert.match(html, /17 个 AI 办公工具协同/, "hero should carry the current tool count");
+assert.match(html, /把邮箱变成/, "hero should lead with the inbox-to-action promise");
 
 for (const asset of ["styles.css", "app.js", "../assets/brand/postbird-logo.png"]) {
   const resolved = path.resolve(demo, asset);

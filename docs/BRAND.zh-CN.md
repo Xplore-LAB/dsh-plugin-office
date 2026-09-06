@@ -42,7 +42,6 @@ Mailbird 运营十余年且为商业产品，第 9 类与第 42 类商标大概�
 
 中文：
 
-> Postbird for DeepSeek Harness 是独立开源项目，与 Mailbird（Contenga International）、Postbird（Mailstreet，比利时）无任何隶属、背书或合作关系。
 
 英文：
 

@@ -445,6 +445,14 @@ await inboxLib.appendIndex(
     msg({
       uid: 10, messageId: "t10@x", from: { address: "digest@substack.com", name: "" }, fromDomain: "substack.com",
       subject: "Daily digest", headers: { listUnsubscribe: true, listUnsubscribeUrl: "<https://sub.example.com/u?x=1>" }
+    }),
+    msg({
+      uid: 11, messageId: "t11@x", from: { address: "prof@zju.edu.cn", name: "王教授" }, fromDomain: "zju.edu.cn",
+      subject: "论文修改意见", snippet: "请于明天回复确认，并修改第二章。", attachments: [{ filename: "comments.docx", size: 1200, contentType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" }]
+    }),
+    msg({
+      uid: 12, messageId: "t12@x", from: { address: "prof@zju.edu.cn", name: "王教授" }, fromDomain: "zju.edu.cn",
+      subject: "Re: 论文修改意见", snippet: "请同时提交实验结果，并在回复中说明完成时间。"
     })
   ],
   inboxLib.defaultIndexPath()
@@ -452,15 +460,43 @@ await inboxLib.appendIndex(
 const s23a = await archiveSearch.execute({ from: "tencent" }, exec);
 ok(s23a.matched === 1 && s23a.items[0].category === "todo", "search by sender substring + category");
 const s23b = await archiveSearch.execute({ hasAttachment: true }, exec);
-ok(s23b.matched === 1 && s23b.items[0].attachments[0] === "resume.pdf", "search hasAttachment=true finds the resume mail");
+ok(s23b.matched === 2 && s23b.items.some((item) => item.attachments.includes("resume.pdf")), "search hasAttachment=true finds indexed attachment mail");
 const s23c = await archiveSearch.execute({ category: "subscription" }, exec);
 ok(s23c.matched === 3, `search category=subscription finds 3 (got ${s23c.matched})`);
 const s23d = await archiveSearch.execute({ subject: "论文" }, exec);
-ok(s23d.matched === 1 && s23d.items[0].subject.includes("论文修改意见"), "search by subject keyword");
+ok(s23d.matched === 3 && s23d.items.every((item) => item.subject.includes("论文修改意见")), "search by subject keyword");
 const s23e = await archiveSearch.execute({ from: "nomatch" }, exec);
 ok(s23e.matched === 0 && s23e.returned === 0, "search with no hits returns empty");
 
-// ── 24. archive: export/attach guardrails (no IMAP in tests) ────────────
+// ── 24. daily brief, action radar, and context-aware reply ──────────────
+const workflowLib = await import(pathToFileURL(path.join(MOUNT, "lib/workflow.js")).href);
+const fixedNow = new Date("2026-09-07T09:00:00+08:00");
+const fixedDeadline = workflowLib.extractDeadline("请于2026年9月8日前提交材料", fixedNow);
+ok(fixedDeadline?.date.startsWith("2026-09-08"), "action radar parses an explicit Chinese deadline");
+const relativeDeadline = workflowLib.extractDeadline("请明天回复确认", fixedNow);
+ok(new Date(relativeDeadline.date).getDate() === 8, "action radar parses a relative deadline");
+ok(workflowLib.normalizeThreadSubject("Re: 回复：论文修改意见") === "论文修改意见", "thread subjects normalize nested reply prefixes");
+
+const dailyBrief = byName("office_daily_brief");
+const actionRadar = byName("office_action_radar");
+const contextReply = byName("office_context_reply");
+const r24a = await dailyBrief.execute({ sinceHours: 24, horizonDays: 7, focusLimit: 3 }, exec);
+ok(r24a.totalMessages >= 11 && r24a.focus.length === 3, "daily brief ranks a bounded focus list");
+ok(typeof r24a.headline === "string" && r24a.safety.includes("未发送"), "daily brief explains result and safety boundary");
+const r24b = await actionRadar.execute({ sinceHours: 24, horizonDays: 14, limit: 20 }, exec);
+ok(r24b.actions.some((item) => item.uid === 11 && item.actionType === "reply"), "action radar extracts reply work from a professor email");
+ok(r24b.actions.every((item) => item.evidence.length > 0), "every action carries evidence");
+const r24c = await contextReply.execute({ uid: 11, replyPoints: ["周三完成第二章修改", "周五补充实验结果"] }, exec);
+ok(r24c.threadLength >= 3 && r24c.drafts.length === 3, "context reply groups the thread and creates three tones");
+ok(r24c.target.to === "prof@zju.edu.cn" && r24c.requiresUserReview === true, "context reply targets the sender and requires review");
+ok(r24c.drafts.every((draft) => draft.body.includes("第二章")), "reply drafts preserve user-provided facts");
+let missingReplyTarget = false;
+try {
+  await contextReply.execute({}, exec);
+} catch (error) { missingReplyTarget = /uid or messageId/.test(error.message); }
+ok(missingReplyTarget, "context reply requires an explicit target message");
+
+// ── 25. archive: export/attach guardrails (no IMAP in tests) ────────────
 const archiveExport = byName("office_archive_export");
 const archiveAttach = byName("office_archive_attach");
 let escErr = false;
@@ -483,7 +519,7 @@ const ef1 = archiveLib.emlFilename(fixtures[0], usedNames);
 const ef2 = archiveLib.emlFilename(fixtures[0], usedNames);
 ok(ef1 !== ef2 && ef2.includes("_2"), "eml filename dedup adds a suffix");
 
-// ── 25. stats: overview from index + send audit log ─────────────────────
+// ── 26. stats: overview from index + send audit log ─────────────────────
 const statsTool = byName("office_stats_overview");
 await fsp.mkdir(path.join(offHome, "mail"), { recursive: true });
 await fsp.appendFile(
@@ -503,7 +539,7 @@ ok(r25.topSenders.some((s) => s.from === "jwc@zju.edu.cn"), "overview lists top 
 ok(r25.topRecipients.some((s) => s.to === "alice@qq.com"), "overview lists top recipients");
 ok(r25.subscriptionShare > 0 && r25.subscriptionShare <= 1, "overview computes subscription share");
 
-// ── 26. stats: job-application ledger ───────────────────────────────────
+// ── 27. stats: job-application ledger ───────────────────────────────────
 const trackTool = byName("office_stats_track");
 const r26a = await trackTool.execute({ action: "scan" }, exec);
 const tencent = r26a.companies.find((c) => c.company === "tencent");
@@ -529,7 +565,7 @@ ok(trackCsvText.includes("tencent") && trackCsvText.includes("offer"), "exported
 const r26e = await trackTool.execute({ action: "list" }, exec);
 ok(r26e.companies.length === r26d.rows, "list matches the export row count");
 
-// ── 27. clean: subscription cleanup advisor ─────────────────────────────
+// ── 28. clean: subscription cleanup advisor ─────────────────────────────
 const cleanTool = byName("office_inbox_clean");
 const r27a = await cleanTool.execute({ minCount: 1, daysBack: 90, limit: 20 }, exec);
 ok(r27a.distinctSenders === 3 && r27a.actionableSenders === 3, `advisor aggregates 3 bulk senders (got ${r27a.distinctSenders}/${r27a.actionableSenders})`);

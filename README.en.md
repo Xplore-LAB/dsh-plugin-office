@@ -2,7 +2,7 @@
 
 <img src="assets/brand/postbird-readme-hero-v3.png" alt="Postbird" width="920" />
 
-### A Simple and Universal AI Office Toolkit, Getting Email and Documents Done.
+### Turn every inbox into clear actions, thoughtful replies, and finished work.
 
 *简洁通用的 AI 办公工具箱，让邮件与文档自动完成。*
 
@@ -10,12 +10,12 @@
 
 [![GitHub stars](https://img.shields.io/github/stars/Xplore-LAB/postbird?style=flat&label=stars&color=gold)](https://github.com/Xplore-LAB/postbird/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/Xplore-LAB/postbird?style=flat&label=forks&color=blue)](https://github.com/Xplore-LAB/postbird/network/members)
-[![release](https://img.shields.io/badge/release-v1.3.0-1683c4)](https://github.com/Xplore-LAB/postbird/releases)
-[![tests](https://img.shields.io/badge/tests-101%20passing-32b643)](tests/)
+[![release](https://img.shields.io/badge/release-v1.4.0-1683c4)](https://github.com/Xplore-LAB/postbird/releases)
+[![tests](https://img.shields.io/badge/tests-112%20passing-32b643)](tests/)
 [![license](https://img.shields.io/badge/license-MIT-1683c4)](LICENSE)
 
 [![platform](https://img.shields.io/badge/platform-DeepSeek%20Harness-7e35d5)](https://github.com/deepseek-ai/deepseek-harness)
-[![tools](https://img.shields.io/badge/tools-14-7e35d5)](#six-office-workflows-one-conversation)
+[![tools](https://img.shields.io/badge/tools-17-7e35d5)](#three-flagship-workflows-in-one-minute)
 [![local first](https://img.shields.io/badge/data-local--first-1683c4)](#safe-by-default)
 [![node](https://img.shields.io/badge/node-%3E%3D%2020-32b643)](package.json)
 
@@ -27,13 +27,25 @@
 
 ## ⚡ Overview
 
-**Postbird is a local-first AI office toolkit for DeepSeek Harness.** It brings inbox triage, safe mail merge, project archiving, job application tracking, and Word, PowerPoint, and spreadsheet generation into one conversational workspace. State your goal, and Postbird coordinates 14 tools while keeping every step and result reviewable.
+**Postbird is a local-first AI inbox and office assistant for DeepSeek Harness.** It finds what matters today, identifies deadlines and replies that need attention, prepares replies from thread context, and turns inbox information into Word, PowerPoint, spreadsheets, and handover-ready archives.
 
 > **You only need to:** Describe the task in natural language and provide mailbox credentials or local files when required.
 >
-> **Postbird will return:** Reviewable results and real `.eml`, `.csv`, `.xlsx`, `.docx`, and `.pptx` files.
+> **Postbird will return:** A daily brief, ranked actions, context-aware replies, and real `.eml`, `.csv`, `.xlsx`, `.docx`, and `.pptx` files.
 
 Connect QQ Mail, 163, 126, Gmail, Outlook, and other standard mailboxes. Inbox access is read-only by default, outbound messages require preview and confirmation, and indexes and generated files remain on your computer.
+
+## ✨ Three Flagship Workflows in One Minute
+
+Open the [Postbird Live Demo](https://xplore-lab.github.io/postbird/demo/) and try:
+
+| Workflow | Say this | Get this |
+| --- | --- | --- |
+| Daily Brief | “Help me start today. What needs my attention?” | Top priorities, deadlines, replies, and supporting evidence |
+| Action Radar | “Find every deadline, follow-up, and overdue request” | Ranked actions with owners, dates, states, and evidence |
+| Context Reply | “Use this thread to prepare my reply” | Thread context, requirements, and three editable drafts |
+
+Every decision is explainable. Sending always requires preview and explicit confirmation.
 
 ### Our Vision
 
@@ -42,10 +54,13 @@ Give every existing mailbox and local file collection a trustworthy, controllabl
 1. **For individuals:** Triage inboxes, track job applications, and create documents with one request, leaving more time for judgment and creative work.
 2. **For teams:** Turn mail merge, archiving, handover, and batch reporting into reviewable and repeatable workflows.
 
-## 🕊️ Six Office Workflows, One Conversation
+## 🕊️ Nine Office Workflows, One Conversation
 
 | What you need | Say this | Postbird delivers |
 | --- | --- | --- |
+| Daily brief | “Help me start today and show me what matters.” | Focus list, deadlines, and replies requiring attention |
+| Action radar | “Find deadlines, follow-ups, and overdue requests.” | Ranked actions, owners, states, and evidence |
+| Context reply | “Use this thread to prepare a reply.” | Thread context, action requirements, and three drafts |
 | Personalized email | “Create individual invitations for these 20 customers and show me a preview first.” | Drafts, previews, delivery receipts |
 | Inbox triage | “Summarize today’s unread mail and highlight urgent actions.” | Summaries, priorities, action items |
 | Archive and handover | “Archive all messages and attachments for this project.” | Original `.eml` files, attachments, handover folder |
@@ -53,11 +68,11 @@ Give every existing mailbox and local file collection a trustworthy, controllabl
 | Subscription analytics | “Find neglected newsletters and count messages by sender.” | Subscription list, statistics, cleanup suggestions |
 | Documents and reports | “Turn this sales CSV into a weekly report, Word details, and an executive deck.” | `.xlsx`, `.docx`, `.pptx` |
 
-The 14 tools work together behind the scenes. You do not need to memorize tool names or assemble workflows by hand.
+The 17 tools work together behind the scenes. You do not need to memorize tool names or assemble workflows by hand.
 
 ## ✨ See the Result
 
-> **Try it without installing:** [Open the Postbird Live Demo](https://xplore-lab.github.io/postbird/demo/) and watch 14 tools collaborate on a real office scenario.
+> **Try it without installing:** [Open the Postbird Live Demo](https://xplore-lab.github.io/postbird/demo/) and experience Daily Brief, Action Radar, and Context Reply in one minute.
 
 <div align="center">
   <img src="assets/brand/postbird-readme-banner.png" alt="Postbird turns email and data into office files" width="920" />
@@ -145,7 +160,7 @@ See the [security policy](SECURITY.md) for details.
 | Document | What it covers |
 | --- | --- |
 | [中文使用指南](docs/GUIDE.zh-CN.md) | 中文安装、配置、工具与排障说明 |
-| [English Guide](docs/GUIDE.en.md) | Setup options, mailbox access, all 14 tools, troubleshooting |
+| [English Guide](docs/GUIDE.en.md) | Setup options, mailbox access, all 17 tools, troubleshooting |
 | [Product Introduction](docs/PRODUCT-INTRO.zh-CN.md) | Positioning, boundaries, and roadmap in Chinese |
 | [Mail Scenarios](docs/MAIL-SCENARIOS.zh-CN.md) | Mail capabilities and workflow examples in Chinese |
 | [Competitive Analysis](docs/COMPETITORS.zh-CN.md) | Market positioning and differentiation in Chinese |

@@ -1,4 +1,37 @@
 const scenes = {
+  daily: {
+    prompt: "帮我开始今天的工作，告诉我最需要处理什么。",
+    intro: "我会读取本地索引，把邮件分类、截止时间和等待回复事项合并成一份今日行动简报。",
+    steps: [
+      ["office_inbox_triage", "理解 61 封邮件的类型与依据"],
+      ["office_action_radar", "提取截止时间与待回复事项"],
+      ["office_daily_brief", "生成今天最重要的 5 件事"]
+    ],
+    reply: "早上好。今天有 2 项截止、1 封需要回复、1 份材料待补充。我已经按紧急程度排好顺序，每项都附有原邮件依据。",
+    render: renderDaily
+  },
+  radar: {
+    prompt: "找出最近两周所有截止事项、等待回复和需要催办的邮件。",
+    intro: "我会从主题和摘要中提取行动、负责人和明确时间，并将逾期、今日和未来事项分开。",
+    steps: [
+      ["office_archive_search", "筛选最近两周的邮件"],
+      ["office_action_radar", "识别行动、截止时间与状态"],
+      ["evidence_guard", "为每项结果保留判断依据"]
+    ],
+    reply: "行动雷达发现 12 项工作：2 项已经逾期，3 项今天到期，5 项即将到期，2 项等待补充时间。",
+    render: renderRadar
+  },
+  reply: {
+    prompt: "结合导师关于论文修改的邮件线程，帮我准备回复。",
+    intro: "我会合并同一主题的往来邮件，找出导师的修改要求和历史承诺，再准备三种可编辑回复。",
+    steps: [
+      ["office_archive_search", "定位论文修改邮件线程"],
+      ["office_context_reply", "整理 6 封上下文与行动信号"],
+      ["office_mail_preview", "准备发送前安全预览"]
+    ],
+    reply: "已读完 6 封往来邮件。导师提出 3 项修改要求，我准备了简洁、正式和友好三种回复，选择后仍需你确认。",
+    render: renderReply
+  },
   triage: {
     prompt: "拉一下最近三天的收件，哪些真需要我处理？",
     intro: "我会只读拉取邮件，按待办、通知、订阅和私信分类，并把低置信度项目留给你复核。",
@@ -74,7 +107,7 @@ const runButton = document.querySelector("#runButton");
 const resetButton = document.querySelector("#resetButton");
 const statusChip = document.querySelector("#statusChip");
 const toast = document.querySelector("#toast");
-let activeScene = "triage";
+let activeScene = "daily";
 let running = false;
 
 function escapeHtml(value) {
@@ -161,6 +194,9 @@ async function run() {
 }
 
 function detectScene(prompt) {
+  if (/今天|今日|开始.*工作|每日|简报/.test(prompt)) return "daily";
+  if (/截止|行动|待办|催办|等待回复|逾期/.test(prompt)) return "radar";
+  if (/回复|线程|上下文|导师|教授/.test(prompt)) return "reply";
   if (/求职|面试|公司|offer|申请/.test(prompt)) return "jobs";
   if (/群发|邀请|收件人|发送|邮件合并/.test(prompt)) return "mailmerge";
   if (/归档|交接|附件|导出/.test(prompt)) return "archive";
@@ -173,6 +209,57 @@ function selectScene(key, reset = true) {
   activeScene = key;
   document.querySelectorAll(".scenario").forEach(button => button.classList.toggle("active", button.dataset.scene === key));
   if (reset) welcome(key);
+}
+
+function renderDaily() {
+  resultContent.innerHTML = `
+    <div class="result-hero"><div class="result-hero-top"><div><label>9 月 7 日 · 今日行动简报</label><strong>先做 5 件事</strong></div><div class="score">92</div></div></div>
+    <div class="metric-grid"><div class="metric todo"><strong>2</strong><span>今天到期</span></div><div class="metric notice"><strong>1</strong><span>需要回复</span></div><div class="metric clean"><strong>4h</strong><span>预计找回</span></div></div>
+    <div class="result-group-title"><span>现在先处理</span><span>按优先级</span></div>
+    ${mailItem("确认论文修改计划", "王教授 · 11:30 前", "回复完成时间，并确认第二章修改范围", "urgent")}
+    ${mailItem("补交奖学金成绩单", "学院学生办 · 今天 17:00", "附件要求 PDF，小于 10 MB", "urgent")}
+    ${mailItem("数据库课程作业", "课程助教 · 周三", "提交代码、报告和演示视频", "")}
+    <div class="result-group-title"><span>可以稍后看</span><span>56 封</span></div>
+    <div class="result-item success"><span class="dot"></span><div><b>18 封通知已归纳，38 封订阅已折叠</b><p>所有邮件保持原状态，需要时可查看依据</p></div></div>`;
+}
+
+function renderRadar() {
+  resultContent.innerHTML = `
+    <div class="result-hero"><div class="result-hero-top"><div><label>行动雷达 · 最近 14 天</label><strong>12 项行动</strong></div><div class="donut"><span>83%</span></div></div></div>
+    <div class="metric-grid"><div class="metric todo"><strong>2</strong><span>已经逾期</span></div><div class="metric notice"><strong>3</strong><span>今天到期</span></div><div class="metric clean"><strong>5</strong><span>未来 7 天</span></div></div>
+    <div class="result-group-title"><span>需要立即处理</span><span>含依据</span></div>
+    ${radarItem("催收 7 名学生奖学金材料", "辅导员", "逾期 1 天", "原邮件：9 月 6 日截止", "urgent")}
+    ${radarItem("回复论文第二章修改计划", "你", "今天 11:30", "关键词：请回复确认", "urgent")}
+    ${radarItem("确认教学研讨会参会名单", "行政办公室", "今天 17:00", "邮件附件：报名名单.xlsx", "")}
+    <div class="confirm-box"><p>雷达只提取和排序行动，不会自动回复、催办或改变邮件状态。</p></div>`;
+}
+
+function radarItem(title, owner, due, evidence, type) {
+  return `<div class="result-item ${type}"><span class="dot"></span><div><b>${title}</b><p>负责人：${owner} · ${due}<br>${evidence}</p><span class="confidence">查看原邮件依据</span></div><time>›</time></div>`;
+}
+
+function renderReply() {
+  resultContent.innerHTML = `
+    <div class="result-hero"><div class="result-hero-top"><div><label>论文修改意见 · 线程摘要</label><strong>6 封邮件</strong></div><div class="score">3</div></div></div>
+    <div class="result-group-title"><span>识别到的要求</span><span>来自原邮件</span></div>
+    ${mailItem("修改第二章研究方法", "王教授 · 邮件 4/6", "补充样本选择依据", "urgent")}
+    ${mailItem("重新生成实验图 3", "王教授 · 邮件 6/6", "统一坐标范围并注明置信区间", "")}
+    ${mailItem("周五前发回新版", "王教授 · 邮件 6/6", "已识别为明确截止时间", "")}
+    <div class="result-group-title"><span>选择回复风格</span><span>可继续编辑</span></div>
+    <div class="tone-picker" role="group" aria-label="回复风格">
+      <button class="tone active" data-tone="简洁">简洁</button><button class="tone" data-tone="正式">正式</button><button class="tone" data-tone="友好">友好</button>
+    </div>
+    <div class="reply-draft" id="replyDraft"><b>王老师您好，</b><p>修改意见已收到。我会补充第二章样本选择依据，重新生成实验图 3，并于周五前发送新版。</p><p>如有其他要求，请您告知。谢谢！</p></div>
+    <div class="confirm-box"><p>当前为浏览器模拟。真实使用时会展示收件人、主题、正文和附件，得到明确确认后才能发送。</p><button class="confirm-button" id="confirmReply">确认并生成发送预览</button></div>`;
+  document.querySelectorAll(".tone").forEach(button => button.addEventListener("click", () => {
+    document.querySelectorAll(".tone").forEach(item => item.classList.toggle("active", item === button));
+    showToast(`已切换为${button.dataset.tone}回复，可继续编辑`);
+  }));
+  document.querySelector("#confirmReply").addEventListener("click", event => {
+    event.currentTarget.disabled = true;
+    event.currentTarget.textContent = "✓ 安全预览已生成，尚未发送";
+    showToast("已生成预览，没有真实邮件发出");
+  });
 }
 
 function renderTriage() {

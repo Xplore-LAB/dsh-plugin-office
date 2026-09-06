@@ -2,7 +2,7 @@
 
 [Back to README](../README.en.md) · [中文指南](GUIDE.zh-CN.md)
 
-This guide covers installer options, optional mailbox access, all 14 tools, configuration, storage, and troubleshooting. For a first run, you only need the “Install and Verify” section.
+This guide covers installer options, optional mailbox access, all 17 tools, configuration, storage, and troubleshooting. For a first run, you only need the “Install and Verify” section.
 
 ## Install and Verify
 
@@ -117,7 +117,7 @@ Summarize employees.csv by department and create an Excel workbook.
 Create one Word notice per row and a five-slide management presentation.
 ```
 
-## All 14 Tools
+## All 17 Tools
 
 The AI selects and combines these tools automatically. Their names document the available capability surface.
 
@@ -127,6 +127,9 @@ The AI selects and combines these tools automatically. Their names document the 
 | `office_mail_send` | Write `.eml` drafts or deliver through SMTP | Preview ID and explicit confirmation required |
 | `office_inbox_fetch` | Fetch recent metadata and snippets | Read-only IMAP and PEEK body fetches |
 | `office_inbox_triage` | Classify action items, notices, subscriptions, and personal mail | Evidence per classification and review queue |
+| `office_daily_brief` | Build today's inbox action brief | Focus items, due states, review queue, and safety note |
+| `office_action_radar` | Extract and rank actions from email | Action type, deadline, priority, and source evidence |
+| `office_context_reply` | Prepare a reply from local thread context | Thread history, action signals, and three editable drafts |
 | `office_archive_search` | Search by sender, subject, date, attachment, and category | Local index only |
 | `office_archive_export` | Export original `.eml` files and `index.csv` | Read-only retrieval and message cap |
 | `office_archive_attach` | Collect attachments from matched mail | Deduplicated names, extension filter, size cap |
