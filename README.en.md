@@ -1,15 +1,25 @@
+<div align="center">
+
+<img src="assets/brand/postbird-readme-hero-v2.png" alt="Postbird carrying information across email, documents, and spreadsheets" width="1000">
+
 # Postbird
 
 **Give email and documents to one conversation. Keep your data and decisions in your hands.**
 
-[![Release](https://img.shields.io/github/v/release/Xplore-LAB/postbird)](https://github.com/Xplore-LAB/postbird/releases)
-[![Tests](https://img.shields.io/badge/tests-100%20passing-brightgreen)](#under-the-hood)
-[![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
-[![Platform](https://img.shields.io/badge/platform-DeepSeek%20Harness-8a2be2)](https://github.com/deepseek-ai/deepseek-harness)
-[![Tools](https://img.shields.io/badge/tools-14-blueviolet)](#the-14-tools)
-[![Node](https://img.shields.io/badge/node-%3E%3D%2020-brightgreen)](https://nodejs.org)
+*Local-first AI office toolkit for DeepSeek Harness*
+
+<p>
+  <a href="https://github.com/Xplore-LAB/postbird/releases"><img src="https://img.shields.io/github/v/release/Xplore-LAB/postbird" alt="Release"></a>
+  <a href="#under-the-hood"><img src="https://img.shields.io/badge/tests-100%20passing-brightgreen" alt="Tests"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="License"></a>
+  <a href="https://github.com/deepseek-ai/deepseek-harness"><img src="https://img.shields.io/badge/platform-DeepSeek%20Harness-8a2be2" alt="Platform"></a>
+  <a href="#the-14-tools"><img src="https://img.shields.io/badge/tools-14-blueviolet" alt="Tools"></a>
+  <a href="https://nodejs.org"><img src="https://img.shields.io/badge/node-%3E%3D%2020-brightgreen" alt="Node"></a>
+</p>
 
 [简体中文](README.md) | English
+
+</div>
 
 ---
 

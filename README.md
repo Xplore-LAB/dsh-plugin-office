@@ -1,15 +1,25 @@
+<div align="center">
+
+<img src="assets/brand/postbird-readme-hero-v2.png" alt="Postbird 信鸽在邮件、文档和表格之间传递信息" width="1000">
+
 # Postbird 信鸽
 
 **把邮件和文档交给一句话，把数据和决定权留在自己手里。**
 
-[![Release](https://img.shields.io/github/v/release/Xplore-LAB/postbird)](https://github.com/Xplore-LAB/postbird/releases)
-[![Tests](https://img.shields.io/badge/tests-100%20passing-brightgreen)](#底层实现)
-[![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
-[![Platform](https://img.shields.io/badge/platform-DeepSeek%20Harness-8a2be2)](https://github.com/deepseek-ai/deepseek-harness)
-[![Tools](https://img.shields.io/badge/tools-14-blueviolet)](#十四个工具)
-[![Node](https://img.shields.io/badge/node-%3E%3D%2020-brightgreen)](https://nodejs.org)
+*Local-first AI office toolkit for DeepSeek Harness*
+
+<p>
+  <a href="https://github.com/Xplore-LAB/postbird/releases"><img src="https://img.shields.io/github/v/release/Xplore-LAB/postbird" alt="Release"></a>
+  <a href="#底层实现"><img src="https://img.shields.io/badge/tests-100%20passing-brightgreen" alt="Tests"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="License"></a>
+  <a href="https://github.com/deepseek-ai/deepseek-harness"><img src="https://img.shields.io/badge/platform-DeepSeek%20Harness-8a2be2" alt="Platform"></a>
+  <a href="#十四个工具"><img src="https://img.shields.io/badge/tools-14-blueviolet" alt="Tools"></a>
+  <a href="https://nodejs.org"><img src="https://img.shields.io/badge/node-%3E%3D%2020-brightgreen" alt="Node"></a>
+</p>
 
 简体中文 | [English](README.en.md)
+
+</div>
 
 ---
 
