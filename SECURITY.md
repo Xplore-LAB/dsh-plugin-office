@@ -103,3 +103,20 @@ LLM 可能理解错意图、被提示注入诱导，或拿到过时数据。防�
 3. **模糊时间明确保留**：无法从摘要识别具体日期时标记为 `unscheduled`，不虚构截止时间。
 4. **回复草稿保留人工判断**：`office_context_reply` 聚合同主题的已索引摘要并生成三种草稿，输出始终标记 `requiresUserReview: true`。
 5. **发送边界保持独立**：回复工具不发送邮件。真实发送仍要调用 `office_mail_preview` 生成预览，再由用户确认后调用 `office_mail_send`。
+
+## 线程、材料与附件理解的安全原则（v1.5 起生效）
+
+1. **完整线程按需读取**：`office_thread_summary` 和 `office_reply_draft` 默认使用本地短摘要。只有调用者明确选择 `contextMode: full` 时才通过只读 IMAP 与 `BODY.PEEK` 重新获取选定邮件。
+2. **完整正文不扩充索引**：full 模式下的正文只存在于当前进程内存，每封邮件受 `maxThreadCharsPerMessage` 限制，处理完成后不会写回 `index.jsonl`。
+3. **线程数量有硬上限**：`maxThreadMessages` 限制一次完整上下文操作触碰的邮件数，避免异常线程造成资源耗尽。
+4. **附件路径严格限制**：`office_attachment_ask` 只读取 `workDir` 内的文件，并受 `maxAttachmentReadMb` 限制。工具不会修改或上传附件。
+5. **证据粒度明确**：PDF、DOCX、PPTX、XLSX 与文本附件分别返回页、段落、幻灯片、工作表行和文本行范围。回答应引用这些位置，并由使用者复核关键结论。
+6. **图片需要视觉复核**：位图附件仅返回受限的本地文件路径和基本元数据，交给具备视觉能力的本地读取器处理。工具不会静默调用第三方 OCR 服务。
+7. **材料状态允许人工覆盖**：`office_collection_track` 保留 `manualStatus` 与备注。重新扫描会继续保留人工确认，避免自动识别覆盖辅导员或行政人员的判断。
+8. **催办始终经过发送护栏**：材料追踪只生成缺失清单和提醒所需数据，不会自动发送催办。邮件仍需预览、检查收件人并明确确认。
+
+Postbird 负责插件自身的本地文件与索引边界。工具返回给 DeepSeek Harness 的文本会进入当前 Agent 上下文，其后续存储与模型处理路径取决于使用者选择的 DeepSeek Harness 部署和模型配置。处理敏感邮件前，应确认运行时符合所在组织的数据要求。
+
+## 已知依赖告警
+
+2026-09-07 的 `npm audit` 会报告 `pptxgenjs` 间接依赖 `image-size` 的两项高危拒绝服务告警，涉及恶意 ICNS、JXL 与 HEIF 文件。上游当前没有修复版本。Postbird 的 `office_pptx` 在读取文件前只允许 PNG、JPEG、GIF 与 SVG，明确拒绝 `.icns`、`.jxl`、`.heif` 和 `.heic`，并有端到端用例验证该边界。维护者会在上游发布修复后及时升级并重新审计。

@@ -2,7 +2,7 @@
 
 [Back to README](../README.en.md) · [中文指南](GUIDE.zh-CN.md)
 
-This guide covers installer options, optional mailbox access, all 17 tools, configuration, storage, and troubleshooting. For a first run, you only need the “Install and Verify” section.
+This guide covers installer options, optional mailbox access, all 22 tools, configuration, storage, and troubleshooting. For a first run, you only need the “Install and Verify” section.
 
 ## Install and Verify
 
@@ -117,7 +117,7 @@ Summarize employees.csv by department and create an Excel workbook.
 Create one Word notice per row and a five-slide management presentation.
 ```
 
-## All 17 Tools
+## All 22 Tools
 
 The AI selects and combines these tools automatically. Their names document the available capability surface.
 
@@ -130,6 +130,11 @@ The AI selects and combines these tools automatically. Their names document the 
 | `office_daily_brief` | Build today's inbox action brief | Focus items, due states, review queue, and safety note |
 | `office_action_radar` | Extract and rank actions from email | Action type, deadline, priority, and source evidence |
 | `office_context_reply` | Prepare a reply from local thread context | Thread history, action signals, and three editable drafts |
+| `office_thread_summary` | Summarize participants, commitments, questions, decisions, and attachments | Local snippets by default, optional read-only full text, citations on every signal |
+| `office_action_extract` | Extract actions from a message, thread, or pasted notice | Deadline, priority, source, and responsibility signals |
+| `office_reply_draft` | Create one selected-tone grounded reply | Review-only output; preview and explicit confirmation still gate sending |
+| `office_collection_track` | Track complete, partial, and pending material submissions | Source evidence, preserved human corrections, CSV or XLSX export |
+| `office_attachment_ask` | Read PDF, Word, PowerPoint, Excel, and text attachments | Work-directory confinement and page, paragraph, slide, or row citations |
 | `office_archive_search` | Search by sender, subject, date, attachment, and category | Local index only |
 | `office_archive_export` | Export original `.eml` files and `index.csv` | Read-only retrieval and message cap |
 | `office_archive_attach` | Collect attachments from matched mail | Deduplicated names, extension filter, size cap |
@@ -176,6 +181,9 @@ config:
   inboxSnippetChars: 300
   maxArchiveMessages: 200
   maxAttachmentMb: 25
+  maxThreadMessages: 50
+  maxThreadCharsPerMessage: 12000
+  maxAttachmentReadMb: 50
 ```
 
 An empty `allowDomains` accepts every valid domain. A list such as `['example.com', 'edu.cn']` blocks every other recipient domain during preview.
@@ -191,12 +199,14 @@ The default data directory is:
 ├── index.jsonl
 ├── sent-log.jsonl
 ├── job-track.json
+├── collections/<id>.json
 ├── previews/
 └── drafts/<id>/
 ```
 
 - The index contains message metadata, bounded snippets, attachment names, and classification evidence.
-- Full messages and attachments are written only when you explicitly export them.
+- Full message text is fetched on demand over read-only IMAP and kept in memory. It is written only through an explicit `.eml` export.
+- `collections/` stores material-tracking ledgers, mail citations, and human corrections.
 - The send log is append-only.
 - Set `DSH_OFFICE_HOME` to relocate all runtime data for testing or project isolation.
 

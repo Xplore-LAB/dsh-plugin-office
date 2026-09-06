@@ -2,7 +2,7 @@
 
 [返回 README](../README.md) · [English Guide](GUIDE.en.md)
 
-这份指南收录安装选项、邮箱接入、完整配置、17 个工具和常见问题。首次体验只需阅读“安装与验证”。
+这份指南收录安装选项、邮箱接入、完整配置、22 个工具和常见问题。首次体验只需阅读“安装与验证”。
 
 ## 安装与验证
 
@@ -137,6 +137,12 @@ QQ、163、126 通常使用邮箱后台生成的授权码。Gmail 通常使用�
 统计这个月的常用联系人、邮件趋势和订阅来源。
 
 扫描求职邮件，更新申请台账，并导出 CSV。
+
+读完导师关于论文修改的完整线程，列出要求和历史承诺。
+
+对照学生名单统计奖学金材料，标出缺件和未交人员。
+
+阅读附件中的要求，并注明 PDF 页码或 Word 段落位置。
 ```
 
 ### 群发与草稿
@@ -163,7 +169,7 @@ QQ、163、126 通常使用邮箱后台生成的授权码。Gmail 通常使用�
 用 contract.docx 作为模板，按 clients.csv 批量填充合同。
 ```
 
-## 17 个工具
+## 22 个工具
 
 AI 会自动选择并组合这些工具。表格用于说明能力边界，日常使用无需记忆工具名。
 
@@ -176,6 +182,11 @@ AI 会自动选择并组合这些工具。表格用于说明能力边界，日�
 | `office_daily_brief` | 生成今日邮件行动简报 | 重点事项、到期状态、待复核项和安全说明 |
 | `office_action_radar` | 提取并排序邮件中的行动 | 行动类型、截止时间、优先级和原邮件依据 |
 | `office_context_reply` | 读取本地线程上下文并准备回复 | 线程脉络、行动信号和三种可编辑草稿 |
+| `office_thread_summary` | 汇总线程中的参与者、承诺、问题、决策和附件 | 默认使用本地摘要，可选只读获取完整正文，每项带邮件引用 |
+| `office_action_extract` | 从邮件线程或粘贴文本中提取行动 | 返回截止时间、优先级、来源和责任线索 |
+| `office_reply_draft` | 生成一种指定语气的上下文回复 | 只生成待审草稿，仍需预览和明确确认才能发送 |
+| `office_collection_track` | 按名单跟踪材料齐全、缺件和未交状态 | 保存来源证据与人工校正，可导出 CSV 或 XLSX |
+| `office_attachment_ask` | 阅读 PDF、Word、PPT、Excel 与文本附件 | 文件限制在工作目录，返回页、段落、幻灯片或表格行引用 |
 | `office_archive_search` | 按发件人、主题、日期、附件和分类检索 | 只读本地索引 |
 | `office_archive_export` | 导出原始 `.eml` 和 `index.csv` | 只读重新获取，限制数量 |
 | `office_archive_attach` | 批量收取匹配邮件的附件 | 文件名去重、类型筛选、大小上限 |
@@ -222,6 +233,9 @@ config:
   inboxSnippetChars: 300
   maxArchiveMessages: 200
   maxAttachmentMb: 25
+  maxThreadMessages: 50
+  maxThreadCharsPerMessage: 12000
+  maxAttachmentReadMb: 50
 ```
 
 `allowDomains` 为空时允许所有有效域名。填写 `['edu.cn', 'example.com']` 后，其他域名会在预览阶段被拦截。
@@ -237,12 +251,14 @@ config:
 ├── index.jsonl
 ├── sent-log.jsonl
 ├── job-track.json
+├── collections/<id>.json
 ├── previews/
 └── drafts/<id>/
 ```
 
 - `index.jsonl` 保存邮件元数据、有限长度摘要、附件名和分类依据。
-- 邮件全文和附件只在明确导出时写入工作目录。
+- 邮件全文按需通过只读 IMAP 获取，仅在当前内存中使用；只有明确导出 `.eml` 时才写入工作目录。
+- `collections/` 保存材料收集台账、邮件引用与人工校正。
 - `sent-log.jsonl` 为追加式发送记录。
 - 可通过 `DSH_OFFICE_HOME` 更改整个数据目录，便于测试或隔离项目。
 
@@ -296,4 +312,4 @@ npm install --legacy-peer-deps
 npm test
 ```
 
-测试覆盖工具注册、文档与表格生成、模板替换、邮件预览与发送护栏、收件分类、归档、统计、求职台账、清理建议，以及安装器的幂等性与 dry run。
+测试覆盖 22 个工具的注册与核心行为、文档和附件引用、材料追踪、邮件预览与发送护栏、收件分类、归档、统计、安装器幂等性，以及浏览器 Demo。

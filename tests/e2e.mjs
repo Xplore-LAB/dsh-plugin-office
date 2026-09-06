@@ -38,6 +38,28 @@ await fsp.rm(base, { recursive: true, force: true });
 await fsp.mkdir(base, { recursive: true });
 process.env.DSH_OFFICE_HOME = path.join(base, "postbird-home");
 
+function simplePdf(text) {
+  const stream = `BT /F1 16 Tf 72 720 Td (${String(text).replace(/[()\\]/g, "\\$&")}) Tj ET`;
+  const objects = [
+    "<< /Type /Catalog /Pages 2 0 R >>",
+    "<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
+    "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 5 0 R >> >> /Contents 4 0 R >>",
+    `<< /Length ${Buffer.byteLength(stream)} >>\nstream\n${stream}\nendstream`,
+    "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>"
+  ];
+  let body = "%PDF-1.4\n";
+  const offsets = [0];
+  objects.forEach((object, index) => {
+    offsets.push(Buffer.byteLength(body));
+    body += `${index + 1} 0 obj\n${object}\nendobj\n`;
+  });
+  const xref = Buffer.byteLength(body);
+  body += `xref\n0 ${objects.length + 1}\n0000000000 65535 f \n`;
+  body += offsets.slice(1).map((offset) => `${String(offset).padStart(10, "0")} 00000 n \n`).join("");
+  body += `trailer\n<< /Size ${objects.length + 1} /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF\n`;
+  return Buffer.from(body);
+}
+
 // fixtures
 await fsp.writeFile(path.join(base, "recipients.csv"),
   "name,email,month,score\nAlice,alice@example.com,September,95\nBob,bob@example.com,September,88\nCarol,carol@example.com,September,76\n", "utf8");
@@ -496,7 +518,85 @@ try {
 } catch (error) { missingReplyTarget = /uid or messageId/.test(error.message); }
 ok(missingReplyTarget, "context reply requires an explicit target message");
 
-// ── 25. archive: export/attach guardrails (no IMAP in tests) ────────────
+// ── 25. grounded thread, action, and selected-tone reply tools ─────────
+ok(tools.filter((tool) => tool.name.startsWith("office_")).length === 22, "all 22 model-facing tools are registered");
+const threadSummary = byName("office_thread_summary");
+const actionExtract = byName("office_action_extract");
+const replyDraft = byName("office_reply_draft");
+const r25a = await threadSummary.execute({ uid: 11, contextMode: "indexed" }, exec);
+ok(r25a.messageCount >= 3 && r25a.contextSource === "local-index-snippets", "thread summary groups indexed context");
+ok(r25a.timeline.every((item) => item.citation.startsWith("mail:")), "thread timeline carries source citations");
+ok(r25a.questions.length > 0 && r25a.attachments.some((item) => item.filename === "comments.docx"), "thread summary surfaces questions and attachments");
+const r25b = await actionExtract.execute({
+  subject: "奖学金通知",
+  text: "请于2026年9月8日前提交成绩单和申请表，并回复辅导员确认。"
+}, exec);
+ok(r25b.scope === "inline-text" && r25b.actions.length > 0, "action extract handles pasted notice text");
+ok(r25b.actions.every((item) => item.citation === "mail:inline-input"), "pasted actions retain an explicit source citation");
+const r25c = await replyDraft.execute({
+  uid: 11,
+  tone: "formal",
+  replyPoints: ["周三完成第二章修改", "周五补充实验结果"]
+}, exec);
+ok(r25c.selectedTone === "formal" && r25c.draft.body.includes("第二章"), "reply draft selects tone and preserves confirmed facts");
+ok(r25c.requiresUserReview === true && /confirm:true/.test(r25c.nextStep), "reply draft preserves preview and confirmation boundary");
+
+// ── 26. collection tracking with evidence, correction, and export ─────
+await inboxLib.appendIndex([
+  msg({
+    uid: 13, messageId: "alice-scholarship@x", from: { address: "alice@example.com", name: "Alice" },
+    subject: "奖学金材料提交", snippet: "提交成绩单和申请表。",
+    attachments: [{ filename: "成绩单.pdf" }, { filename: "申请表.docx" }]
+  }),
+  msg({
+    uid: 14, messageId: "bob-scholarship@x", from: { address: "bob@example.com", name: "Bob" },
+    subject: "奖学金材料提交", snippet: "先提交申请表，另一项材料稍后补充。",
+    attachments: [{ filename: "申请表.docx" }]
+  })
+], inboxLib.defaultIndexPath());
+const collectionTrack = byName("office_collection_track");
+const collectionScan = await collectionTrack.execute({
+  action: "scan", collectionId: "scholarship-2026", title: "2026 奖学金材料",
+  subjectKeyword: "奖学金", requiredItems: ["成绩单|transcript", "申请表|application"],
+  participants: [
+    { name: "Alice", email: "alice@example.com" },
+    { name: "Bob", email: "bob@example.com" },
+    { name: "Carol", email: "carol@example.com" }
+  ]
+}, exec);
+ok(collectionScan.counts.complete === 1 && collectionScan.counts.partial === 1 && collectionScan.counts.pending === 1, "collection scan separates complete, partial, and pending participants");
+ok(collectionScan.participants.find((person) => person.email === "alice@example.com").evidence[0].citation.startsWith("mail:"), "collection status links to source mail");
+const collectionUpdate = await collectionTrack.execute({
+  action: "update", collectionId: "scholarship-2026", participantEmail: "carol@example.com",
+  status: "exempt", note: "本学期休学，经人工确认免交"
+}, exec);
+ok(collectionUpdate.counts.exempt === 1 && collectionUpdate.updated.note.includes("人工确认"), "collection tracker preserves a human correction and note");
+const collectionExport = await collectionTrack.execute({
+  action: "export", collectionId: "scholarship-2026", outputPath: "collections/scholarship.xlsx", workDir: base
+}, exec);
+ok(collectionExport.rows === 3 && existsSync(collectionExport.file), "collection ledger exports to XLSX");
+const collectionBook = new ExcelJS.Workbook();
+await collectionBook.xlsx.readFile(collectionExport.file);
+ok(collectionBook.worksheets[0].rowCount === 4, "collection workbook contains header and three participants");
+
+// ── 27. attachment evidence across Office and PDF formats ──────────────
+const attachmentAsk = byName("office_attachment_ask");
+const attachmentDocx = await attachmentAsk.execute({ file: path.relative(base, singlePath), query: "Quarterly Review", workDir: base }, exec);
+ok(attachmentDocx.evidence.some((item) => /paragraph-1/.test(item.citation)), "Word evidence cites the paragraph");
+const attachmentPptx = await attachmentAsk.execute({ file: path.relative(base, r9.files[0]), query: "Highlights", workDir: base }, exec);
+ok(attachmentPptx.evidence.some((item) => /slide-2/.test(item.citation)), "PowerPoint evidence cites the slide");
+const attachmentXlsx = await attachmentAsk.execute({ file: "agg/departments.xlsx", query: "Engineering", workDir: base }, exec);
+ok(attachmentXlsx.evidence.some((item) => /!2$/.test(item.citation)), "Excel evidence cites the sheet and row");
+await fsp.writeFile(path.join(base, "deadline.pdf"), simplePdf("Scholarship deadline Friday"));
+const attachmentPdf = await attachmentAsk.execute({ file: "deadline.pdf", query: "scholarship deadline", workDir: base }, exec);
+ok(attachmentPdf.evidence.some((item) => /page-1/.test(item.citation)), "PDF evidence cites the page");
+let attachmentEscape = false;
+try {
+  await attachmentAsk.execute({ file: "../../etc/hosts", query: "host", workDir: base }, exec);
+} catch (error) { attachmentEscape = /escapes workDir/.test(error.message); }
+ok(attachmentEscape, "attachment reader blocks paths outside workDir");
+
+// ── 28. archive: export/attach guardrails (no IMAP in tests) ────────────
 const archiveExport = byName("office_archive_export");
 const archiveAttach = byName("office_archive_attach");
 let escErr = false;
@@ -519,7 +619,7 @@ const ef1 = archiveLib.emlFilename(fixtures[0], usedNames);
 const ef2 = archiveLib.emlFilename(fixtures[0], usedNames);
 ok(ef1 !== ef2 && ef2.includes("_2"), "eml filename dedup adds a suffix");
 
-// ── 26. stats: overview from index + send audit log ─────────────────────
+// ── 29. stats: overview from index + send audit log ─────────────────────
 const statsTool = byName("office_stats_overview");
 await fsp.mkdir(path.join(offHome, "mail"), { recursive: true });
 await fsp.appendFile(
@@ -539,7 +639,7 @@ ok(r25.topSenders.some((s) => s.from === "jwc@zju.edu.cn"), "overview lists top 
 ok(r25.topRecipients.some((s) => s.to === "alice@qq.com"), "overview lists top recipients");
 ok(r25.subscriptionShare > 0 && r25.subscriptionShare <= 1, "overview computes subscription share");
 
-// ── 27. stats: job-application ledger ───────────────────────────────────
+// ── 30. stats: job-application ledger ───────────────────────────────────
 const trackTool = byName("office_stats_track");
 const r26a = await trackTool.execute({ action: "scan" }, exec);
 const tencent = r26a.companies.find((c) => c.company === "tencent");
@@ -565,7 +665,7 @@ ok(trackCsvText.includes("tencent") && trackCsvText.includes("offer"), "exported
 const r26e = await trackTool.execute({ action: "list" }, exec);
 ok(r26e.companies.length === r26d.rows, "list matches the export row count");
 
-// ── 28. clean: subscription cleanup advisor ─────────────────────────────
+// ── 31. clean: subscription cleanup advisor ─────────────────────────────
 const cleanTool = byName("office_inbox_clean");
 const r27a = await cleanTool.execute({ minCount: 1, daysBack: 90, limit: 20 }, exec);
 ok(r27a.distinctSenders === 3 && r27a.actionableSenders === 3, `advisor aggregates 3 bulk senders (got ${r27a.distinctSenders}/${r27a.actionableSenders})`);

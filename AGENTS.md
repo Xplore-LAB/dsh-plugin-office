@@ -24,4 +24,4 @@ The project uses Node.js 20 or newer with ES modules. Model-facing tools use `@d
 
 ## Current state
 
-Version 1.4.0 exposes 17 tools. The flagship inbox workflows are `office_daily_brief`, `office_action_radar`, and `office_context_reply`. GitHub Pages serves the browser-only simulated Demo from `demo/`.
+Version 1.5.0 exposes 22 tools. The flagship inbox workflows are `office_daily_brief`, `office_action_radar`, and `office_context_reply`. Thread summaries, action extraction, selected-tone replies, material collection tracking, and cited attachment reading extend these workflows across six campus roles. GitHub Pages serves the browser-only simulated Demo from `demo/`.

@@ -1,4 +1,80 @@
 const scenes = {
+  roleUndergrad: {
+    prompt: "帮我看看这周有哪些必须完成的事情。",
+    intro: "我会把教务、学院、辅导员和任课教师的通知汇成一张本周行动清单，并保留每项结论的邮件依据。",
+    steps: [
+      ["office_inbox_triage", "区分教务通知、课程邮件与普通订阅"],
+      ["office_action_extract", "提取作业、考试、申请与回复要求"],
+      ["office_attachment_ask", "核对附件中的提交格式与缺失材料"],
+      ["office_daily_brief", "生成本周必做清单与日历建议"]
+    ],
+    reply: "这周有 4 项必须完成。数据库作业周三截止，六级信息周五确认，奖学金材料还缺成绩单，王老师的实验安排需要回复。",
+    render: () => renderCampus("undergrad")
+  },
+  roleGraduate: {
+    prompt: "导师最近让我修改了什么，帮我整理并起草回复。",
+    intro: "我会读完整邮件线程，对照附件版本，提取导师的修改要求与汇报节点，再生成一封有依据的正式回复。",
+    steps: [
+      ["office_thread_summary", "还原 6 封往来邮件与历史承诺"],
+      ["office_attachment_ask", "定位批注中的段落和图表要求"],
+      ["office_action_extract", "生成论文修改清单与截止日期"],
+      ["office_reply_draft", "结合上下文准备正式回复"],
+      ["office_mail_preview", "展示收件人、正文与附件预览"]
+    ],
+    reply: "导师新增了 3 项要求。我已整理为论文修改计划，标注下次汇报日期，并准备好正式回复。每一项都能回到原邮件或附件位置。",
+    render: () => renderCampus("graduate")
+  },
+  roleCounselor: {
+    prompt: "统计奖学金材料提交情况，提醒还缺材料的学生。",
+    intro: "我会对照学生名单和邮件附件，区分已齐、缺件和未交，生成个性化提醒与可导出的汇总表。",
+    steps: [
+      ["office_collection_track", "核对 86 名学生和 4 项必需材料"],
+      ["office_attachment_ask", "读取申请表与证明文件的关键字段"],
+      ["office_reply_draft", "为缺件学生生成个性化提醒"],
+      ["office_mail_preview", "展示完整收件人与发送内容"],
+      ["office_sheet", "导出 Excel 汇总和留档清单"]
+    ],
+    reply: "86 名学生中 68 人材料齐全，11 人缺件，7 人尚未提交。我已逐人列出缺失项并生成提醒预览，发送仍需你确认。",
+    render: () => renderCampus("counselor")
+  },
+  roleAdmin: {
+    prompt: "整理本次培训报名邮件，生成名单、缺失材料提醒和汇报。",
+    intro: "我会汇总报名邮件，检查字段、重复记录和附件，再一次生成名单、提醒、Word 汇报和 PPT 概览。",
+    steps: [
+      ["office_collection_track", "汇总 128 封报名邮件并核对名单"],
+      ["office_attachment_ask", "抽取部门、联系方式和报名项目"],
+      ["office_sheet", "生成去重后的 Excel 报名表"],
+      ["office_docgen", "生成 Word 情况汇报"],
+      ["office_pptx", "生成会议用 PPT 概览"]
+    ],
+    reply: "报名材料已整理。发现 3 条重复报名和 9 人字段缺失，Excel 名单、提醒草稿、Word 汇报与 PPT 概览均已准备。",
+    render: () => renderCampus("admin")
+  },
+  roleTeacher: {
+    prompt: "汇总数据库课程的学生邮件，告诉我需要处理什么。",
+    intro: "我会把作业、补交、请假和重复问题汇总成班级状态，准备分类回复，并整理课程归档。",
+    steps: [
+      ["office_archive_search", "定位数据库课程相关邮件"],
+      ["office_action_extract", "识别补交、请假和待确认事项"],
+      ["office_collection_track", "核对作业提交与缺交学生"],
+      ["office_reply_draft", "为不同问题生成回复草稿"],
+      ["office_archive_attach", "归档课程邮件和作业附件"]
+    ],
+    reply: "需要处理 13 项：3 位学生申请补交，2 封请假待确认，8 个重复问题可以统一回复。12 份新作业已进入提交表。",
+    render: () => renderCampus("teacher")
+  },
+  roleProfessor: {
+    prompt: "帮我处理最近三天的重要邮件，只保留需要我决策的事情。",
+    intro: "我会过滤宣传与普通通知，汇总学术线程，只留下需要判断、审批或委派的事项。",
+    steps: [
+      ["office_daily_brief", "筛出最近三天的高价值邮件"],
+      ["office_thread_summary", "还原合作、投稿与学生邮件上下文"],
+      ["office_action_extract", "提取需要决策、审批和委派的事项"],
+      ["office_reply_draft", "为需要回复的邮件准备草稿"]
+    ],
+    reply: "今天需要你决策 5 件事：两篇论文修改、一项合作邀请、一份学生实验方案和一个基金节点。其余事项已整理为可委派清单。",
+    render: () => renderCampus("professor")
+  },
   daily: {
     prompt: "帮我开始今天的工作，告诉我最需要处理什么。",
     intro: "我会读取本地索引，把邮件分类、截止时间和等待回复事项合并成一份今日行动简报。",
@@ -25,8 +101,9 @@ const scenes = {
     prompt: "结合导师关于论文修改的邮件线程，帮我准备回复。",
     intro: "我会合并同一主题的往来邮件，找出导师的修改要求和历史承诺，再准备三种可编辑回复。",
     steps: [
-      ["office_archive_search", "定位论文修改邮件线程"],
-      ["office_context_reply", "整理 6 封上下文与行动信号"],
+      ["office_thread_summary", "定位并整理 6 封邮件上下文"],
+      ["office_attachment_ask", "核对附件中的具体修改位置"],
+      ["office_context_reply", "结合上下文准备三种可编辑回复"],
       ["office_mail_preview", "准备发送前安全预览"]
     ],
     reply: "已读完 6 封往来邮件。导师提出 3 项修改要求，我准备了简洁、正式和友好三种回复，选择后仍需你确认。",
@@ -107,7 +184,7 @@ const runButton = document.querySelector("#runButton");
 const resetButton = document.querySelector("#resetButton");
 const statusChip = document.querySelector("#statusChip");
 const toast = document.querySelector("#toast");
-let activeScene = "daily";
+let activeScene = "roleGraduate";
 let running = false;
 
 function escapeHtml(value) {
@@ -194,6 +271,12 @@ async function run() {
 }
 
 function detectScene(prompt) {
+  if (/本周|这周/.test(prompt) && /必须|完成|通知/.test(prompt)) return "roleUndergrad";
+  if (/导师|论文修改|审稿意见/.test(prompt)) return "roleGraduate";
+  if (/奖学金|学生.*材料|缺材料/.test(prompt)) return "roleCounselor";
+  if (/培训报名|报名邮件|行政汇报/.test(prompt)) return "roleAdmin";
+  if (/数据库课程|课程.*学生邮件|作业提交/.test(prompt)) return "roleTeacher";
+  if (/只保留.*决策|合作邀请|实验方案审批/.test(prompt)) return "roleProfessor";
   if (/今天|今日|开始.*工作|每日|简报/.test(prompt)) return "daily";
   if (/截止|行动|待办|催办|等待回复|逾期/.test(prompt)) return "radar";
   if (/回复|线程|上下文|导师|教授/.test(prompt)) return "reply";
@@ -208,7 +291,104 @@ function detectScene(prompt) {
 function selectScene(key, reset = true) {
   activeScene = key;
   document.querySelectorAll(".scenario").forEach(button => button.classList.toggle("active", button.dataset.scene === key));
+  document.querySelectorAll(".identity").forEach(button => button.classList.toggle("active", button.dataset.scene === key));
   if (reset) welcome(key);
+}
+
+const campusResults = {
+  undergrad: {
+    label: "本科生 · 本周校园行动",
+    title: "4 件事必须完成",
+    score: "7天",
+    metrics: [["2", "课程事项", "todo"], ["1", "申请缺件", "notice"], ["1", "等待回复", "clean"]],
+    group: "已按截止时间排序",
+    items: [
+      ["数据库课程作业", "课程助教 · 周三 23:59", "代码、报告、演示视频，来自通知邮件和附件第 2 页", "urgent"],
+      ["确认六级考试信息", "教务处 · 周五 17:00", "确认考场与证件信息，来源 mail:jwc-204", "urgent"],
+      ["补交奖学金成绩单", "学院学生办 · 周五", "当前缺少 1 项材料，申请表已收到", ""],
+      ["回复实验安排", "王老师 · 等待确认", "已准备简洁、正式、友好三种回复", ""]
+    ],
+    note: "每项结论都保留原邮件和附件位置，可以一键复核。"
+  },
+  graduate: {
+    label: "研究生 · 导师线程已整理",
+    title: "3 项论文修改",
+    score: "6封",
+    metrics: [["3", "修改要求", "todo"], ["2", "附件版本", "notice"], ["1", "回复草稿", "clean"]],
+    group: "修改计划与依据",
+    items: [
+      ["补充第二章样本选择依据", "王教授 · 邮件 4/6", "批注位置：comments.docx 第 12 段", "urgent"],
+      ["重新生成实验图 3", "王教授 · 邮件 6/6", "统一坐标范围并注明置信区间", ""],
+      ["周五前发送新版", "线程中的明确承诺", "来源 mail:prof-thread-06，可查看上下文", "urgent"]
+    ],
+    note: "正式回复已准备，收件人、正文和附件会在发送前完整预览。"
+  },
+  counselor: {
+    label: "辅导员 · 奖学金材料追踪",
+    title: "86 名学生已核对",
+    score: "79%",
+    metrics: [["68", "材料齐全", "clean"], ["11", "材料缺失", "todo"], ["7", "尚未提交", "notice"]],
+    group: "优先催办名单",
+    items: [
+      ["陈雨 · 缺成绩单", "已收到申请表和证明", "依据：mail:student-042 · 2 个附件", "urgent"],
+      ["赵一 · 缺签字页", "申请表第 3 页未签字", "依据：申请表.pdf 第 3 页", "urgent"],
+      ["7 名学生尚未提交", "名单已与邮箱逐一核对", "个性化提醒已生成，等待发送确认", ""]
+    ],
+    note: "人工更正会被保留，重新扫描邮件时不会覆盖确认结果。",
+    download: "scholarship"
+  },
+  admin: {
+    label: "行政老师 · 培训报名汇总",
+    title: "128 封邮件已整理",
+    score: "4份",
+    metrics: [["116", "有效报名", "clean"], ["9", "字段缺失", "todo"], ["3", "重复记录", "notice"]],
+    group: "一次完成的交付",
+    items: [
+      ["培训报名名单.xlsx", "116 条有效记录", "姓名、部门、联系方式和报名项目已统一", ""],
+      ["缺失材料提醒", "9 份个性化草稿", "收件人与缺失字段可逐项预览", "urgent"],
+      ["情况汇报.docx 与概览.pptx", "可直接用于会议", "关键数字均可追溯到邮件和附件", ""]
+    ],
+    note: "邮件、附件、表格、文档和汇报已经形成一个可交接成果包。",
+    download: "training"
+  },
+  teacher: {
+    label: "教学老师 · 数据库课程邮箱",
+    title: "13 项需要处理",
+    score: "48人",
+    metrics: [["12", "新作业", "clean"], ["3", "申请补交", "todo"], ["2", "请假待确认", "notice"]],
+    group: "班级状态与下一步",
+    items: [
+      ["3 位学生申请补交", "原因和历史记录已汇总", "可分别生成同意、补充说明、拒绝草稿", "urgent"],
+      ["8 个重复问题", "集中在截止时间与文件格式", "已生成一封统一回复草稿", ""],
+      ["作业提交表已更新", "12 个附件归入学生目录", "缺交名单和邮件依据可导出", ""]
+    ],
+    note: "教师直接看到待处理事项与班级状态，无需逐封翻阅。"
+  },
+  professor: {
+    label: "教授 · 三日决策简报",
+    title: "只需判断 5 件事",
+    score: "优先",
+    metrics: [["2", "论文节点", "todo"], ["1", "合作邀请", "notice"], ["2", "审批与基金", "clean"]],
+    group: "需要你的判断",
+    items: [
+      ["论文修改时间冲突", "本周需确认两篇论文", "线程摘要已合并作者承诺和审稿要求", "urgent"],
+      ["跨校合作邀请", "方向匹配度较高", "已提取资源投入、产出与时间要求", ""],
+      ["学生实验方案审批", "等待 2 天", "关键风险和可委派事项已列出", "urgent"],
+      ["基金材料节点", "周五 17:00", "缺预算说明，回复草稿已准备", ""]
+    ],
+    note: "普通通知和宣传邮件已归纳，可委派事项另存为课题组任务清单。"
+  }
+};
+
+function renderCampus(key) {
+  const data = campusResults[key];
+  resultContent.innerHTML = `
+    <div class="result-hero"><div class="result-hero-top"><div><label>${data.label}</label><strong>${data.title}</strong></div><div class="score">${data.score}</div></div></div>
+    <div class="metric-grid">${data.metrics.map(([value, label, type]) => `<div class="metric ${type}"><strong>${value}</strong><span>${label}</span></div>`).join("")}</div>
+    <div class="result-group-title"><span>${data.group}</span><span>均含依据</span></div>
+    ${data.items.map(([title, sender, detail, type]) => mailItem(title, sender, detail, type)).join("")}
+    <div class="confirm-box"><p>${data.note}</p>${data.download ? `<button class="confirm-button campus-download" data-file="${data.download}">↓ 下载模拟汇总表</button>` : ""}</div>`;
+  bindDownloads();
 }
 
 function renderDaily() {
@@ -385,9 +565,17 @@ function download(type) {
   const contents = {
     jobs: "company,status,last_update,next_action\n字节跳动,interview,二面通过,等待HR沟通\n腾讯,interview,技术一面,准备项目复盘\n阿里云,written-test,在线笔试完成,等待结果\n米哈游,offer,意向书已收到,确认入职时间\n",
     archive: "date,from,subject,attachments\n2026-08-18,project@example.com,项目确认,project-plan.pdf\n2026-08-21,client@example.com,Re: 交付时间,\n",
-    eml: "From: project@example.com\nTo: team@example.com\nSubject: 项目确认\nDate: Tue, 18 Aug 2026 10:30:00 +0800\n\n这是 Postbird Live Demo 生成的虚构邮件样本。\n"
+    eml: "From: project@example.com\nTo: team@example.com\nSubject: 项目确认\nDate: Tue, 18 Aug 2026 10:30:00 +0800\n\n这是 Postbird Live Demo 生成的虚构邮件样本。\n",
+    scholarship: "姓名,邮箱,状态,已收材料,缺失材料,依据\n陈雨,chenyu@example.edu,partial,申请表;证明,成绩单,mail:student-042\n赵一,zhaoyi@example.edu,partial,申请表,签字页,申请表.pdf第3页\n李明,liming@example.edu,complete,申请表;成绩单;证明,,mail:student-018\n",
+    training: "姓名,部门,联系方式,报名项目,状态,缺失字段\n周敏,教务处,13800000001,教学管理培训,complete,\n陈宁,信息学院,,数据治理培训,partial,联系方式\n"
   };
-  const names = { jobs: "postbird-job-tracker.csv", archive: "postbird-archive-index.csv", eml: "postbird-demo-message.eml" };
+  const names = {
+    jobs: "postbird-job-tracker.csv",
+    archive: "postbird-archive-index.csv",
+    eml: "postbird-demo-message.eml",
+    scholarship: "postbird-scholarship-collection.csv",
+    training: "postbird-training-registration.csv"
+  };
   const blob = new Blob([contents[type]], { type: "text/plain;charset=utf-8" });
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
@@ -405,6 +593,7 @@ function showToast(text) {
 }
 
 document.querySelectorAll(".scenario").forEach(button => button.addEventListener("click", () => selectScene(button.dataset.scene)));
+document.querySelectorAll(".identity").forEach(button => button.addEventListener("click", () => selectScene(button.dataset.scene)));
 runButton.addEventListener("click", run);
 resetButton.addEventListener("click", () => welcome(activeScene));
 promptInput.addEventListener("keydown", event => {

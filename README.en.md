@@ -2,20 +2,19 @@
 
 <img src="assets/brand/postbird-readme-hero-v3.png" alt="Postbird" width="920" />
 
-### Turn every inbox into clear actions, thoughtful replies, and finished work.
+### Turn the campus inbox into an AI workspace that takes action.
 
-*简洁通用的 AI 办公工具箱，让邮件与文档自动完成。*
+*Organize notices, track deadlines, collect materials, draft replies, and deliver real Word, Excel, PowerPoint, and email files from one request.*
 
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-Try%20Postbird-55e5d5?style=for-the-badge&logo=github&logoColor=071426)](https://xplore-lab.github.io/postbird/demo/)
+[![Campus Roles](https://img.shields.io/badge/Campus%20Roles-Six%20Experiences-50a6ff?style=for-the-badge)](#six-campus-roles)
+[![Quick Start](https://img.shields.io/badge/Quick%20Start-Five%20Minutes-9f86ff?style=for-the-badge)](#five-minute-start)
 
 [![GitHub stars](https://img.shields.io/github/stars/Xplore-LAB/postbird?style=flat&label=stars&color=gold)](https://github.com/Xplore-LAB/postbird/stargazers)
-[![GitHub forks](https://img.shields.io/github/forks/Xplore-LAB/postbird?style=flat&label=forks&color=blue)](https://github.com/Xplore-LAB/postbird/network/members)
-[![release](https://img.shields.io/badge/release-v1.4.0-1683c4)](https://github.com/Xplore-LAB/postbird/releases)
-[![tests](https://img.shields.io/badge/tests-112%20passing-32b643)](tests/)
+[![release](https://img.shields.io/badge/release-v1.5.0-1683c4)](https://github.com/Xplore-LAB/postbird/releases)
+[![tests](https://img.shields.io/badge/checks-130%20passing-32b643)](tests/)
+[![tools](https://img.shields.io/badge/tools-22-7e35d5)](#22-tools-working-together)
 [![license](https://img.shields.io/badge/license-MIT-1683c4)](LICENSE)
-
-[![platform](https://img.shields.io/badge/platform-DeepSeek%20Harness-7e35d5)](https://github.com/deepseek-ai/deepseek-harness)
-[![tools](https://img.shields.io/badge/tools-17-7e35d5)](#three-flagship-workflows-in-one-minute)
 [![local first](https://img.shields.io/badge/data-local--first-1683c4)](#safe-by-default)
 [![node](https://img.shields.io/badge/node-%3E%3D%2020-32b643)](package.json)
 
@@ -25,153 +24,162 @@
 
 ---
 
-## ⚡ Overview
+## ⚡ Understand Postbird in One Minute
 
-**Postbird is a local-first AI inbox and office assistant for DeepSeek Harness.** It finds what matters today, identifies deadlines and replies that need attention, prepares replies from thread context, and turns inbox information into Word, PowerPoint, spreadsheets, and handover-ready archives.
+**Postbird is a local-first AI inbox and office assistant for DeepSeek Harness.** It turns requirements scattered across messages, long threads, and attachments into actions, replies, trackers, and finished deliverables.
 
-> **You only need to:** Describe the task in natural language and provide mailbox credentials or local files when required.
+> **You say:** “Help me start today.”
 >
-> **Postbird will return:** A daily brief, ranked actions, context-aware replies, and real `.eml`, `.csv`, `.xlsx`, `.docx`, and `.pptx` files.
+> **Postbird delivers:** A daily brief, action radar, cited thread summary, reply drafts, collection tracker, and real `.eml`, `.csv`, `.xlsx`, `.docx`, and `.pptx` files.
 
-Connect QQ Mail, 163, 126, Gmail, Outlook, and other standard mailboxes. Inbox access is read-only by default, outbound messages require preview and confirmation, and indexes and generated files remain on your computer.
+Open the [Postbird Live Demo](https://xplore-lab.github.io/postbird/demo/), choose a campus role, and experience the full workflow without installing or signing in.
 
-## ✨ Three Flagship Workflows in One Minute
-
-Open the [Postbird Live Demo](https://xplore-lab.github.io/postbird/demo/) and try:
-
-| Workflow | Say this | Get this |
+| Core experience | Say this | See this in one minute |
 | --- | --- | --- |
-| Daily Brief | “Help me start today. What needs my attention?” | Top priorities, deadlines, replies, and supporting evidence |
-| Action Radar | “Find every deadline, follow-up, and overdue request” | Ranked actions with owners, dates, states, and evidence |
-| Context Reply | “Use this thread to prepare my reply” | Thread context, requirements, and three editable drafts |
+| Daily Brief | “Help me start today” | Priorities, deadlines, and replies that need attention |
+| Action Radar | “Find every deadline, follow-up, and overdue request” | Ranked actions with owners, states, and source evidence |
+| Context Reply | “Read this thread and prepare my reply” | Previous commitments, attachment requirements, and editable drafts |
+| Collection Tracker | “Show who submitted and what is missing” | Complete, partial, and pending rosters with reminder previews |
+| Attachment Q&A | “What format and deadline does the attachment require?” | Cited PDF pages, Word paragraphs, slides, and spreadsheet rows |
 
-Every decision is explainable. Sending always requires preview and explicit confirmation.
+Every conclusion links back to its source. Outbound email always requires a preview and explicit confirmation.
 
-### Our Vision
+## Six Campus Roles
 
-Give every existing mailbox and local file collection a trustworthy, controllable, and deliverable AI office layer.
-
-1. **For individuals:** Triage inboxes, track job applications, and create documents with one request, leaving more time for judgment and creative work.
-2. **For teams:** Turn mail merge, archiving, handover, and batch reporting into reviewable and repeatable workflows.
-
-## 🕊️ Nine Office Workflows, One Conversation
-
-| What you need | Say this | Postbird delivers |
+| Role | Say this | Postbird delivers |
 | --- | --- | --- |
-| Daily brief | “Help me start today and show me what matters.” | Focus list, deadlines, and replies requiring attention |
-| Action radar | “Find deadlines, follow-ups, and overdue requests.” | Ranked actions, owners, states, and evidence |
-| Context reply | “Use this thread to prepare a reply.” | Thread context, action requirements, and three drafts |
-| Personalized email | “Create individual invitations for these 20 customers and show me a preview first.” | Drafts, previews, delivery receipts |
-| Inbox triage | “Summarize today’s unread mail and highlight urgent actions.” | Summaries, priorities, action items |
-| Archive and handover | “Archive all messages and attachments for this project.” | Original `.eml` files, attachments, handover folder |
-| Job tracking | “Scan the last 30 days of recruiting mail and update my application status.” | Structured tracker and progress statistics |
-| Subscription analytics | “Find neglected newsletters and count messages by sender.” | Subscription list, statistics, cleanup suggestions |
-| Documents and reports | “Turn this sales CSV into a weekly report, Word details, and an executive deck.” | `.xlsx`, `.docx`, `.pptx` |
+| Undergraduate | “What must I complete this week?” | A campus action list spanning coursework, exams, applications, and replies |
+| Graduate student | “What did my advisor ask me to revise? Draft a reply.” | Revision plan, attachment citations, meeting date, and grounded reply |
+| Counselor | “Track scholarship materials and remind students with missing items.” | Submission tracker, missing items, reminder previews, and Excel export |
+| Administrator | “Organize training registrations and create a report.” | Deduplicated roster, attachment index, Word report, and presentation |
+| Instructor | “Summarize student email for this course.” | Assignment status, late requests, leave requests, replies, and archive |
+| Professor | “Keep only messages that need my decision.” | Research milestones, collaboration decisions, approvals, and delegated work |
 
-The 17 tools work together behind the scenes. You do not need to memorize tool names or assemble workflows by hand.
+```text
+Scan inbox
+    ↓
+Identify role and goal
+    ↓
+Build the brief and action radar
+    ↓
+Read threads and local attachments
+    ↓
+Prepare replies, trackers, and deliverables
+    ↓
+Show evidence and outbound preview
+    ↓
+Wait for the user's decision
+```
 
-## ✨ See the Result
-
-> **Try it without installing:** [Open the Postbird Live Demo](https://xplore-lab.github.io/postbird/demo/) and experience Daily Brief, Action Radar, and Context Reply in one minute.
+## ✨ From Reading Email to Finishing Work
 
 <div align="center">
-  <img src="assets/brand/postbird-readme-banner.png" alt="Postbird turns email and data into office files" width="920" />
+  <img src="assets/brand/postbird-readme-banner.png" alt="Postbird turns email and data into office deliverables" width="920" />
 </div>
 
-One CSV can become a summary workbook, individual Word files, and a presentation. A group of messages can become a prioritized digest, an action list, and a searchable archive.
+1. **Understand the inbox:** Classify messages and extract deadlines, owners, questions, commitments, and decisions.
+2. **Recover context:** Group a whole thread and optionally fetch full text over read-only IMAP.
+3. **Read attachments:** Retrieve cited evidence from PDF, Word, PowerPoint, Excel, and text files.
+4. **Move communication forward:** Draft a grounded reply and show recipients, body, and attachments before sending.
+5. **Track collection work:** Compare a roster with incoming mail, preserve human corrections, and export results.
+6. **Deliver real work:** Produce standard email, spreadsheet, Word, PowerPoint, and archive files.
 
-```text
-You: Turn example/employees.csv into a department summary,
-individual Word files, and a presentation.
+## Why It Feels Simple
 
-Postbird: Processed 6 records and generated:
-✓ department-summary.xlsx
-✓ 6 Word documents
-✓ demo-summary.pptx
-```
+| Experience | Benefit |
+| --- | --- |
+| Natural-language entry | No tool names or manual orchestration to memorize |
+| Six role-based demos | Visitors immediately see a workflow that resembles their own work |
+| Evidence on every result | Open the source message, PDF page, Word paragraph, slide, or sheet row |
+| End-to-end delivery | Continue from reading and deciding to reports, documents, and archives |
+| Configuration on demand | Demo and local documents work first; mailbox credentials come later |
+| Human review | Low-confidence results are surfaced and every send requires confirmation |
 
-Try the complete local workflow without a mailbox:
+## 22 Tools Working Together
 
-```bash
-npm run demo
-```
+| Capability | Tools |
+| --- | --- |
+| Inbox and actions | `office_inbox_fetch`, `office_inbox_triage`, `office_daily_brief`, `office_action_radar`, `office_thread_summary`, `office_action_extract` |
+| Replies and sending | `office_context_reply`, `office_reply_draft`, `office_mail_preview`, `office_mail_send` |
+| Materials and attachments | `office_collection_track`, `office_attachment_ask`, `office_archive_search`, `office_archive_export`, `office_archive_attach` |
+| Insights and organization | `office_stats_overview`, `office_stats_track`, `office_inbox_clean` |
+| Office deliverables | `office_sheet`, `office_docgen`, `office_pptx`, `office_template` |
 
-## 🔄 How It Works
+You can keep using natural language. Postbird composes these tools for each task.
 
-```text
-Natural-language goal
-    ↓
-Postbird plans and selects tools
-    ↓
-Mail or files are processed locally into reviewable results
-    ↓
-Outbound mail is previewed and sent only after confirmation
-```
-
-## 🚀 Start in Three Steps
-
-### 1. Install
+## Five-Minute Start
 
 ```bash
 git clone https://github.com/Xplore-LAB/postbird.git
 cd postbird
 npm run setup
-```
-
-The installer discovers your DeepSeek Harness profile, installs runtime dependencies, and registers the plugin. If you have multiple profiles, select one:
-
-```bash
-npm run setup -- --profile web
-```
-
-### 2. Check
-
-```bash
 npm run doctor
 ```
 
-The doctor reports core, inbox, and outbound readiness separately. Documents, presentations, spreadsheets, drafts, and local analysis work without mailbox credentials.
-
-### 3. Start a Conversation
-
-Restart DeepSeek Harness and describe the outcome you want:
+Restart DeepSeek Harness and describe an outcome:
 
 ```text
-Read this sales CSV, summarize it by region, and create an Excel workbook
-plus an executive PowerPoint deck.
+Read this registration sheet, summarize it by department,
+and create an Excel workbook, a Word report, and a presentation.
 ```
 
-When you need mailbox workflows, follow the optional [mail setup guide](docs/GUIDE.en.md#optional-mailbox-setup). Presets for QQ Mail, 163, 126, Gmail, and Outlook remove the need to look up server addresses.
+Try the local Office workflow without a mailbox:
 
-## 🛡️ Safe by Default
+```bash
+npm run demo
+```
+
+<details>
+<summary><strong>Connect a real mailbox, optional</strong></summary>
+
+Postbird supports QQ Mail, 163, 126, Gmail, Outlook, and standard IMAP and SMTP services. Store app passwords in environment variables:
+
+```bash
+export DSH_IMAP_PASS="your-app-password"
+export DSH_SMTP_PASS="your-app-password"
+```
+
+Then provide the mailbox address in the DeepSeek Harness `tool-office` configuration. Common services use built-in server presets. See the [English guide](docs/GUIDE.en.md#optional-mailbox-setup) for full instructions. Read-only inbox workflows and outbound delivery can be enabled independently.
+
+</details>
+
+## Safe by Default
 
 | Design | Default behavior |
 | --- | --- |
-| Local first | Mail indexes, attachments, and generated files stay on your computer |
-| Read-only inbox | IMAP opens with `readOnly` enabled |
+| Local first | Indexes, trackers, attachments, and generated files stay on your computer |
+| Read-only inbox | IMAP uses a read-only lock and `BODY.PEEK`, preserving unread state |
+| Minimal body retention | The index stores snippets; full text is fetched on demand and kept only in memory |
+| Path confinement | Attachment reads, exports, and generated files stay inside the chosen work directory |
 | Confirm before send | Postbird previews first and sends only after explicit confirmation |
-| Real deliverables | Mail and office documents are written to inspectable standard files |
+| Human correction | Collection status and low-confidence decisions remain reviewable |
 | Isolated credentials | App passwords come from environment variables and stay out of the repository |
 
-See the [security policy](SECURITY.md) for details.
+See the [security policy](SECURITY.md) for the threat model and detailed boundaries.
 
-## 📚 Explore More
+Tool output enters the active DeepSeek Harness agent context. Before processing sensitive mail, confirm that your selected runtime and model meet your data requirements.
+
+## Vision
+
+Give every existing mailbox and local file collection a trustworthy, controllable, and deliverable AI office layer. Postbird helps individuals recover attention and helps teams turn collection, mail merge, archiving, handover, and reporting into reviewable workflows.
+
+## Explore More
 
 | Document | What it covers |
 | --- | --- |
-| [中文使用指南](docs/GUIDE.zh-CN.md) | 中文安装、配置、工具与排障说明 |
-| [English Guide](docs/GUIDE.en.md) | Setup options, mailbox access, all 17 tools, troubleshooting |
-| [Product Introduction](docs/PRODUCT-INTRO.zh-CN.md) | Positioning, boundaries, and roadmap in Chinese |
-| [Mail Scenarios](docs/MAIL-SCENARIOS.zh-CN.md) | Mail capabilities and workflow examples in Chinese |
+| [中文使用指南](docs/GUIDE.zh-CN.md) | Chinese setup, tool reference, and troubleshooting |
+| [English Guide](docs/GUIDE.en.md) | Setup, mailbox access, all 22 tools, and troubleshooting |
+| [Product Introduction](docs/PRODUCT-INTRO.zh-CN.md) | Product direction and capability boundaries in Chinese |
+| [Mail Scenarios](docs/MAIL-SCENARIOS.zh-CN.md) | Six campus roles and workflow examples in Chinese |
 | [Competitive Analysis](docs/COMPETITORS.zh-CN.md) | Market positioning and differentiation in Chinese |
-| [Promotion Strategy](docs/STRATEGY.zh-CN.md) | Messaging and growth strategy in Chinese |
+| [Promotion Strategy](docs/STRATEGY.zh-CN.md) | Public messaging and growth strategy in Chinese |
 
-## 🙏 Acknowledgements
+## Acknowledgements
 
-Postbird is built on the DeepSeek Harness ecosystem and excellent open-source projects including [Nodemailer](https://nodemailer.com/), [ImapFlow](https://imapflow.com/), [mailparser](https://nodemailer.com/extras/mailparser/), [docx](https://docx.js.org/), [PptxGenJS](https://gitbrent.github.io/PptxGenJS/), and [ExcelJS](https://github.com/exceljs/exceljs).
+Postbird is built on the DeepSeek Harness ecosystem and excellent open-source projects including [Nodemailer](https://nodemailer.com/), [ImapFlow](https://imapflow.com/), [MailParser](https://nodemailer.com/extras/mailparser/), [PDF.js](https://mozilla.github.io/pdf.js/), [docx](https://docx.js.org/), [PptxGenJS](https://gitbrent.github.io/pptxgenjs/), and [ExcelJS](https://github.com/exceljs/exceljs).
 
-If Postbird saves you time, consider giving the project a ⭐. Issues and pull requests are always welcome.
+If Postbird saves you time, consider giving the project a ⭐. Issues and pull requests are welcome.
 
-## 📄 License
+## License
 
 [MIT](LICENSE)
