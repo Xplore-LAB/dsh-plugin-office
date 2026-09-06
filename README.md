@@ -6,6 +6,8 @@
 
 *A Simple and Universal AI Office Toolkit, Getting Email and Documents Done.*
 
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-在线体验-55e5d5?style=for-the-badge&logo=github&logoColor=071426)](https://xplore-lab.github.io/postbird/demo/)
+
 [![GitHub stars](https://img.shields.io/github/stars/Xplore-LAB/postbird?style=flat&label=stars&color=gold)](https://github.com/Xplore-LAB/postbird/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/Xplore-LAB/postbird?style=flat&label=forks&color=blue)](https://github.com/Xplore-LAB/postbird/network/members)
 [![release](https://img.shields.io/badge/release-v1.3.0-1683c4)](https://github.com/Xplore-LAB/postbird/releases)
@@ -54,6 +56,8 @@ QQ、163、126、Gmail、Outlook 等常见邮箱均可接入。收件默认只�
 14 个工具在后台协作。你无需记工具名，也无需手工拼装工作流。
 
 ## ✨ 实际效果
+
+> **无需安装即可体验：** [打开 Postbird Live Demo](https://xplore-lab.github.io/postbird/demo/)，选择一个办公场景，用一句话观察 14 个工具如何协作。
 
 <div align="center">
   <img src="assets/brand/postbird-readme-banner.png" alt="Postbird 从邮件与数据生成办公文件" width="920" />

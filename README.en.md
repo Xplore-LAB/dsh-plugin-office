@@ -6,6 +6,8 @@
 
 *简洁通用的 AI 办公工具箱，让邮件与文档自动完成。*
 
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Try%20Postbird-55e5d5?style=for-the-badge&logo=github&logoColor=071426)](https://xplore-lab.github.io/postbird/demo/)
+
 [![GitHub stars](https://img.shields.io/github/stars/Xplore-LAB/postbird?style=flat&label=stars&color=gold)](https://github.com/Xplore-LAB/postbird/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/Xplore-LAB/postbird?style=flat&label=forks&color=blue)](https://github.com/Xplore-LAB/postbird/network/members)
 [![release](https://img.shields.io/badge/release-v1.3.0-1683c4)](https://github.com/Xplore-LAB/postbird/releases)
@@ -54,6 +56,8 @@ Give every existing mailbox and local file collection a trustworthy, controllabl
 The 14 tools work together behind the scenes. You do not need to memorize tool names or assemble workflows by hand.
 
 ## ✨ See the Result
+
+> **Try it without installing:** [Open the Postbird Live Demo](https://xplore-lab.github.io/postbird/demo/) and watch 14 tools collaborate on a real office scenario.
 
 <div align="center">
   <img src="assets/brand/postbird-readme-banner.png" alt="Postbird turns email and data into office files" width="920" />
