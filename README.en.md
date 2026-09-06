@@ -8,12 +8,14 @@
 
 <sub><b>Postbird for DeepSeek Harness</b> — an independent open-source project, not affiliated with, endorsed by, or connected to Mailbird (Contenga International) or Postbird (Mailstreet, Belgium).</sub>
 
-[![Release](https://img.shields.io/github/v/release/Xplore-LAB/postbird)](https://github.com/Xplore-LAB/postbird/releases)
-[![Tests](https://img.shields.io/badge/tests-100%20passing-brightgreen)](#under-the-hood)
-[![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
-[![Platform](https://img.shields.io/badge/platform-DeepSeek%20Harness-8a2be2)](https://github.com/deepseek-ai/deepseek-harness)
-[![Tools](https://img.shields.io/badge/tools-14-blueviolet)](#the-14-tools)
-[![Node](https://img.shields.io/badge/node-%3E%3D%2020-brightgreen)](https://nodejs.org)
+<p align="center">
+  <a href="https://github.com/Xplore-LAB/postbird/releases"><img src="https://img.shields.io/github/v/release/Xplore-LAB/postbird" alt="Release" style="display:inline-block;vertical-align:middle"></a>
+  <a href="#under-the-hood"><img src="https://img.shields.io/badge/tests-100%20passing-brightgreen" alt="Tests" style="display:inline-block;vertical-align:middle"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="License" style="display:inline-block;vertical-align:middle"></a>
+  <a href="https://github.com/deepseek-ai/deepseek-harness"><img src="https://img.shields.io/badge/platform-DeepSeek%20Harness-8a2be2" alt="Platform" style="display:inline-block;vertical-align:middle"></a>
+  <a href="#the-14-tools"><img src="https://img.shields.io/badge/tools-14-blueviolet" alt="Tools" style="display:inline-block;vertical-align:middle"></a>
+  <a href="https://nodejs.org"><img src="https://img.shields.io/badge/node-%3E%3D%2020-brightgreen" alt="Node" style="display:inline-block;vertical-align:middle"></a>
+</p>
 
 [简体中文](README.md) · English · [产品介绍（通俗版）](docs/PRODUCT-INTRO.zh-CN.md) · [Naming & trademarks](docs/BRAND.zh-CN.md)
 
